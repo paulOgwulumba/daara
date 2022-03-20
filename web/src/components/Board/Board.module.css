@@ -1,0 +1,144 @@
+.boardWrapper {
+    height: 600px;
+    width: 600px;
+    background-color: #2B2D2F;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.boardRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 580px;
+    height: calc(580px / 4);
+}
+
+.boardCellWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(580px / 5);
+    height: calc(580px / 5);
+}
+
+.boardCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #36454F;
+    width: calc(560px / 5);
+    height: calc(560px / 5);
+    border: 1px inset rgb(126, 124, 124);
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.boardCellHit {
+    background-color: black;
+}
+
+.boardCellHitBefore {
+    background-color: rgb(129, 126, 126);
+}
+
+.boardCellSelected {
+    background-color: whitesmoke;
+}
+
+.boardPiece {
+    width: calc(500px / 5);
+    height: calc(500px / 5);
+    border-radius: 100%;
+    border: 1px outset rgb(49, 48, 48);
+    animation: swell 2s linear 0ms infinite forwards;
+}
+
+.boardPiecePlayerOne {
+    background-color: rgb(226, 157, 157);
+}
+
+.boardPiecePlayerTwo {
+    background-color: blue;
+}
+
+.boardPieceHide {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .boardWrapper {
+        height: 500px;
+        width: 500px;
+    }
+
+    .boardRow {
+        width: 480px;
+        height: calc(480px / 4);
+    }
+
+    .boardCellWrapper {
+        width: calc(480px / 5);
+        height: calc(480px / 5);
+    }
+
+    .boardCell {
+        width: calc(460px / 5);
+        height: calc(460px / 5);
+    }
+
+    .boardPiece {
+        width: calc(400px / 5);
+        height: calc(400px / 5);
+    }
+}
+
+/** 
+  Small (sm) devices (landscap phones, 576px and down)
+**/
+@media (max-width: 576px) {
+    .boardWrapper {
+        height: fit-content;
+        width: 80vw;
+    }
+    .boardRow {
+        width: 74vw;
+        height: calc(74vw / 5);
+    }
+
+    .boardCellWrapper {
+        width: calc(74vw / 5);
+        height: calc(74vw / 5);
+    }
+
+    .boardCell {
+        width: calc(72vw / 5);
+        height: calc(72vw / 5);
+    }
+
+    .boardPiece {
+        width: calc(60vw / 5);
+        height: calc(60vw / 5);
+    }
+}
+
+@keyframes swell {
+    0% {
+      transform: scale(1);
+    }
+    25% {
+      transform: scale(1.03);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    75% {
+      transform: scale(1.03);
+    }
+    100% {
+      transform: scale(1.01);
+    }
+}
