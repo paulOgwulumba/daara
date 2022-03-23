@@ -6,9 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from './utils/constants';
 import * as reachBackend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
+import MyAlgoConnect from '@reach-sh/stdlib/ALGO_MyAlgoConnect';
 
 const reach = loadStdlib('ALGO');
-reach.setProviderByName(Provider.TEST_NET);
+reach.setWalletFallback(reach.walletFallback({ providerEnv: 'TestNet', MyAlgoConnect }))
 
 ReactDOM.render(
   <React.StrictMode>
