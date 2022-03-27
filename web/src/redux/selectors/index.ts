@@ -96,6 +96,22 @@ const selectPlayerTwoPiecesLeft = (state: any) => {
     return state.playerState.playerTwoPiecesLeft;
 };
 
+const getPlayerWalletAccount = () => {
+    return Store.getState().appState.playerWalletAccount;
+};
+
+const selectPlayerWalletAccount = (state: any) => {
+  return state.appState.playerWalletAccount;
+};
+
+const getCurrentView = () => {
+    return Store.getState().appState.currentView;
+};
+
+const selectCurrentView = (state: any) => {
+  return state.appState.currentView;
+}
+
 export const StateGetter = {
     getBoardState,
     getAllPiecesAddedToBoard,
@@ -109,6 +125,8 @@ export const StateGetter = {
     getPlayerTwoPiecesInHand,
     getPlayerOnePiecesLeft,
     getPlayerTwoPiecesLeft,
+    getPlayerWalletAccount,
+    getCurrentView,
 };
 
 export const Selector = {
@@ -124,4 +142,6 @@ export const Selector = {
     selectPlayerTwoPiecesInHand,
     selectPlayerOnePiecesLeft,
     selectPlayerTwoPiecesLeft,
+    selectPlayerWalletAccount,
+    selectCurrentView,
 }

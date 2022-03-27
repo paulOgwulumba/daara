@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadStdlib } from '@reach-sh/stdlib';
+import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { ConditionalRender } from './components';
 import { 
@@ -10,105 +10,87 @@ import {
     GamePlayView, 
 } from './views';
 import { Views, participantTitle } from './utils/constants';
-import { StateGetter } from './redux/selectors';
+
+import { Selector } from './redux/selectors';
 import Store from './redux/store';
+import { updatePlayerWalletAccount, updateCurrentView } from './redux/slices';
 
 export interface IAppProps {
     reach: any,
     reachBackend: Object,
-}
+};
 
-class App extends React.Component<IAppProps> {
-    state = {
-        playerWalletAccount: {},
-        currentView: Views.CONNECT_ACCOUNT_VIEW,
+const App = ({ reach, reachBackend }: IAppProps) => {
+    const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
+    const currentView = useSelector(Selector.selectCurrentView);
+    const dispatch = useDispatch();
+
+    const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
+        return reach.formatCurrency(amount, 10);
     };
 
-    constructor(props: IAppProps) {
-        super(props);
-        
-        this.convertCurrencyFromBigNumberToSmallNumber = this.convertCurrencyFromBigNumberToSmallNumber.bind(this);
-        this.convertCurrencyFromSmallNumberToBigNumber = this.convertCurrencyFromSmallNumberToBigNumber.bind(this);
-        this.handleCreateNewGame =  this.handleCreateNewGame.bind(this);
-        this.handlePlayerRoleSelect = this.handlePlayerRoleSelect.bind(this);
-        this.handleReturn = this.handleReturn.bind(this);
-    }
-
-    async componentDidMount() {
-        console.log(Store.getState());
-        let something = StateGetter.getBoardState();
-        console.log(something);
-
-        const { reach } = this.props;
-        let playerWalletAccount;
-        try {
-            playerWalletAccount = await reach.getDefaultAccount();
-            this.setState({ playerWalletAccount, currentView: Views.DEPLOYER_OR_ATTACHER_VIEW });
-        }
-        catch (err) {
-            this.setState({ currentView: Views.CONNECT_ACCOUNT_ERROR_VIEW });
-        }
-    }
-
-    render() {
-        return (
-          <div className = 'App'>
-              <ConditionalRender isVisible = { this.state.currentView === Views.CONNECT_ACCOUNT_VIEW }>
-                  <ConnectAccountView />
-              </ConditionalRender>
-
-              <ConditionalRender isVisible = { this.state.currentView === Views.CONNECT_ACCOUNT_ERROR_VIEW }>
-                  <ConnectAccountErrorView />
-              </ConditionalRender>
-
-              <ConditionalRender isVisible = { this.state.currentView === Views.DEPLOYER_OR_ATTACHER_VIEW }>
-                  <DeployerOrAttacherView handleParticipantTitleSelect = { this.handlePlayerRoleSelect }/>
-              </ConditionalRender>
-
-              <ConditionalRender isVisible = { this.state.currentView === Views.DEPLOYER_SET_WAGER_VIEW }>
-                  <DeployerSetWagerView 
-                      handleReturn = { this.handleReturn }
-                      handleCreateNewGame = { this.handleCreateNewGame }
-                  />
-              </ConditionalRender>
-
-              <ConditionalRender isVisible = { this.state.currentView === Views.GAME_PLAY_VIEW }>
-                  <GamePlayView />
-              </ConditionalRender>
-          </div>
-        )
+    const convertCurrencyFromSmallNumberToBigNumber = (amount: number) => {
+        return reach.parseCurrency(amount);
     };
 
-    convertCurrencyFromBigNumberToSmallNumber(amount: number) {
-        return this.props.reach.formatCurrency(amount, 10);
-    }
+    const handleCreateNewGame = (wager: number) => {
+        console.log(convertCurrencyFromBigNumberToSmallNumber(convertCurrencyFromSmallNumberToBigNumber(wager)));
+    };
 
-    convertCurrencyFromSmallNumberToBigNumber(amount: number) {
-        return this.props.reach.parseCurrency(amount);
-    }
-
-    handleCreateNewGame(wager: number) {
-        console.log(this.convertCurrencyFromBigNumberToSmallNumber(this.convertCurrencyFromSmallNumberToBigNumber(wager)));
-    }
-
-    handlePlayerRoleSelect(role: participantTitle) {
+    const handlePlayerRoleSelect = (role: participantTitle) => {
         if (role === participantTitle.DEPLOYER) {
-            this.setState({ currentView: Views.DEPLOYER_SET_WAGER_VIEW })
+            dispatch(updateCurrentView(Views.DEPLOYER_SET_WAGER_VIEW));
         }
         else {
             // state change for displaying attacher view goes here.
         } 
-    }
+    };
 
-    handleReturn(viewToReturnTo: Views) {
-        this.setState({ currentView: viewToReturnTo });
-    }
+    const handleReturn = (viewToReturnTo: Views) => {
+        dispatch(updateCurrentView(viewToReturnTo));
+    };
 
-    InteractInterface =  {
-        getNumberOfPiecesLeft () {
-            
+    const connectToDefaultAccount = async () => {
+        try {
+            const walletAccount = await reach.getDefaultAccount();
+            dispatch(updatePlayerWalletAccount(walletAccount));
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
         }
-    }
+        catch (err) {
+            dispatch(updateCurrentView(Views.CONNECT_ACCOUNT_ERROR_VIEW));
+        }
+    };
+
+    useEffect(() => {
+        connectToDefaultAccount();
+    }, []);
+
+    return (
+      <div className = 'App'>
+          <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_VIEW }>
+              <ConnectAccountView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_ERROR_VIEW }>
+              <ConnectAccountErrorView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.DEPLOYER_OR_ATTACHER_VIEW }>
+              <DeployerOrAttacherView handleParticipantTitleSelect = { handlePlayerRoleSelect }/>
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.DEPLOYER_SET_WAGER_VIEW }>
+              <DeployerSetWagerView 
+                  handleReturn = { handleReturn }
+                  handleCreateNewGame = { handleCreateNewGame }
+              />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.GAME_PLAY_VIEW }>
+              <GamePlayView />
+          </ConditionalRender>
+      </div>
+    )
 };
 
 export default App;

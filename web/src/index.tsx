@@ -1,22 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { Provider } from './utils/constants';
-import * as reachBackend from './build/index.main.mjs';
+import { Provider } from 'react-redux';
 import { loadStdlib } from '@reach-sh/stdlib';
 import MyAlgoConnect from '@reach-sh/stdlib/ALGO_MyAlgoConnect';
 
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { Provider as NetworkProvider } from './utils/constants';
+import * as reachBackend from './build/index.main.mjs';
+import store from './redux/store';
+import './index.css';
+
 const reach = loadStdlib('ALGO');
-reach.setWalletFallback(reach.walletFallback({ providerEnv: 'TestNet', MyAlgoConnect }))
+reach.setWalletFallback(reach.walletFallback({ providerEnv: NetworkProvider.TEST_NET, MyAlgoConnect }))
 
 ReactDOM.render(
   <React.StrictMode>
-    <App 
-        reach = { reach } 
-        reachBackend = { reachBackend }  
-    />
+      <Provider store={store}>
+          <App 
+              reach = { reach } 
+              reachBackend = { reachBackend }  
+          />
+      </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
