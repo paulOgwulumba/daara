@@ -29,20 +29,21 @@ const initialBoardState = `00000_00000_00000_00000_00000`;
 
 function GamePlay() {
   const numberOfPieces = 6;
+
   const [boardState, setBoardState] = useState(initialBoardState);
-  const [playerTurn, setPlayerTurn] = useState(player.FIRST_PLAYER);
-  const [currentPlayer, setCurrentPlayer] = useState(player.FIRST_PLAYER);
   const [allPiecesAddedToBoard, setAllPiecesAddedToBoard] = useState(false);
+  const [cellOfSelectedPiece, setCellOfselectedPiece] = useState({ X:0, Y:0 });
+
   const [playerOnePiecesInHand, setPlayerOnePiecesInHand] = useState(numberOfPieces);
   const [playerOnePiecesLeft, setPlayerOnePiecesLeft] = useState(numberOfPieces);
   const [playerTwoPiecesInHand, setPlayerTwoPiecesInHand] = useState(numberOfPieces);
   const [playerTwoPiecesLeft, setPlayerTwoPiecesLeft] = useState(numberOfPieces);
+
+  const [playerTurn, setPlayerTurn] = useState(player.FIRST_PLAYER);
+  const [currentPlayer, setCurrentPlayer] = useState(player.FIRST_PLAYER);
   const [isPlayerToPlayAgain, setIsPlayerToplayAgain] = useState(false);
   const [isPlayerToAttackOpponentPieces, setIsPlayerToAttackOpponentPieces] = useState(false);
   const [numberOfAttacksLeft, setNumberOfAttacksLeft] = useState(0);
-  const [cellOfSelectedPiece, setCellOfselectedPiece] = useState({ X:0, Y:0 });
-  
-  
   
   const handleClick = (position: cellPosition) => {
       let unpackedBoardState = unpackBoardState(boardState);

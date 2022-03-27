@@ -10,6 +10,8 @@ import {
     GamePlayView, 
 } from './views';
 import { Views, participantTitle } from './utils/constants';
+import { StateGetter } from './redux/selectors';
+import Store from './redux/store';
 
 export interface IAppProps {
     reach: any,
@@ -33,6 +35,10 @@ class App extends React.Component<IAppProps> {
     }
 
     async componentDidMount() {
+        console.log(Store.getState());
+        let something = StateGetter.getBoardState();
+        console.log(something);
+
         const { reach } = this.props;
         let playerWalletAccount;
         try {
