@@ -1,0 +1,5 @@
+export enum Views {
+    CONNECT_ACCOUNT_VIEW = 0,
+    CONNECT_ACCOUNT_ERROR_VIEW = 1,
+    GAME_PLAY_VIEW = 2,
+};
