@@ -1,3 +1,5 @@
+import { fromSome } from '@reach-sh/stdlib/dist/types/shared_backend';
+
 export * from './addPieceToSelectedCell';
 export * from './cellContainsPlayerOnePiece';
 export * from './cellContainsPlayerTwoPiece';
@@ -21,6 +23,7 @@ export * from './reduceNumberOfPiecesOfOpponentByOne';
 export * from './refreshMatchedCells';
 export * from './removePieceFromCell';
 export * from './selectPieceToBeMoved';
+export * from './toggleCurrentPlayer';
 export * from './togglePlayerTurn';
 export * from './unpackBoardState';
 export * from './isSelectedPieceClickedOnAgain';

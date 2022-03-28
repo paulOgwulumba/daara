@@ -1,6 +1,7 @@
 import { cellPosition } from './interfaces';
 import { cellState, player } from './constants';
 import { stringifyBoardState } from '.';
+import { updateBoardState } from '../redux/slices';
 
 /**
    * @description This adds a piece of player one or player two to a cell depending on whose turn to play it is.
@@ -14,7 +15,7 @@ import { stringifyBoardState } from '.';
     unpackedBoardState: Array<Array<number>>, 
     position: cellPosition, 
     playerTurn: number, 
-    setState?: Function
+    dispatch?: any,
   ) => {
     unpackedBoardState[position.Y][position.X] = 
     playerTurn === player.FIRST_PLAYER? 
@@ -22,8 +23,9 @@ import { stringifyBoardState } from '.';
         : 
         cellState.CELL_CONTAINING_PIECE_PLAYER_2;
 
-    if (setState) {
-        setState(stringifyBoardState(unpackedBoardState));
+    if (dispatch) {
+        // setState(stringifyBoardState(unpackedBoardState));
+        dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
     }
 
     return unpackedBoardState;

@@ -1,5 +1,6 @@
 import React from "react";
 import { player } from "./constants";
+import { updatePlayerOnePiecesLeft, updatePlayerTwoPiecesLeft } from "../redux/slices";
 
 /**
  * @description This method reduces the number of pieces of the other player by one.
@@ -13,13 +14,12 @@ const reduceNumberOfPiecesOfOpponentByOne = (
     currentPlayer: number, 
     playerOnePiecesLeft: number,
     playerTwoPiecesLeft: number,
-    setStatePlayerOne: React.Dispatch<React.SetStateAction<number>>, 
-    setStatePlayerTwo: React.Dispatch<React.SetStateAction<number>>,
+    dispatch: any,
 ) => {
     currentPlayer === player.FIRST_PLAYER? 
-        setStatePlayerTwo(playerTwoPiecesLeft - 1) 
+        dispatch(updatePlayerTwoPiecesLeft(playerTwoPiecesLeft - 1))// setStatePlayerTwo(playerTwoPiecesLeft - 1) 
         : 
-        setStatePlayerOne(playerOnePiecesLeft - 1);
+        dispatch(updatePlayerOnePiecesLeft(playerOnePiecesLeft - 1))//setStatePlayerOne(playerOnePiecesLeft - 1);
 };
 
 export { reduceNumberOfPiecesOfOpponentByOne };
