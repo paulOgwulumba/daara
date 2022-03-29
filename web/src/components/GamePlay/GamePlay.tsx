@@ -7,6 +7,7 @@ import {
     checkIfAllPiecesHaveBeenAddedToBoard,
     decorateMatchedPieces,
     deselectPreviouslySelectedCell,
+    endAttack,
     endDoublePlay,
     unpackBoardState, 
     stringifyBoardState, 
@@ -79,6 +80,7 @@ function GamePlay() {
         else {
             // check if current player selected a piece before
             if (isPlayerToPlayAgain) {  
+               
                 if (isSelectedPieceClickedOnAgain(cellOfSelectedPiece, position)) {
                     deselectPreviouslySelectedCell(unpackedBoardState, playerTurn, position, dispatch); 
                     endDoublePlay(dispatch);
@@ -94,12 +96,13 @@ function GamePlay() {
 
                     const matchHandling = processMatch(gamePlayState);
                     if (matchHandling.isAMatch) {
+                        
                         decorateMatchedPieces(matchHandling.cellPositionsWithAMatch, unpackedBoardState, playerTurn)
                     
                         // Signify that player can attack opponent's pieces.
                         dispatch(updateNumberOfAttacksLeft(matchHandling.cellPositionsWithAMatch.length> 3? 2 : 1));
                         dispatch(updateIsPlayerToAttackOpponentPieces(true));
-                        dispatch(updateIsPlayerToPlayAgain);
+                        dispatch(updateIsPlayerToPlayAgain(false));
                     } 
                     else {
                         togglePlayerTurn(playerTurn, dispatch);
@@ -114,6 +117,7 @@ function GamePlay() {
                 }
             }
             else if (isPlayerToAttackOpponentPieces) {
+                    
                     const pieceAttackValidityStatus = isValidPieceToAttack(gamePlayState);
                     if (pieceAttackValidityStatus.isValid) {
                         unpackedBoardState = removePieceFromCell(unpackedBoardState, position);
@@ -130,7 +134,7 @@ function GamePlay() {
                             
                             reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
                             
-                            endDoublePlay(dispatch);
+                            endAttack(dispatch);
                         
                             boardStateString = refreshMatchedCells(boardStateString, currentPlayer);
                         } 

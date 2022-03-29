@@ -35,10 +35,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     const handleCreateNewGame = (wager: number) => {
         console.log(convertCurrencyFromBigNumberToSmallNumber(convertCurrencyFromSmallNumberToBigNumber(wager)));
-<<<<<<< HEAD
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-=======
->>>>>>> 1a84134ef329f6d0b2c372a2bf4bcebe7e62a0ff
     };
 
     const handlePlayerRoleSelect = (role: participantTitle) => {

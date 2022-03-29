@@ -6,6 +6,7 @@ export * from './cellContainsPlayerTwoPiece';
 export * from './checkIfAllPiecesHaveBeenAddedToBoard';
 export * from './decorateMatchedPieces';
 export * from './deselectPreviouslySelectedCell';
+export * from './endAttack';
 export * from './endDoublePlay';
 export * from './gamePlay';
 export * from './getNumberOfPiecesAbove';
