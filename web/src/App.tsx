@@ -33,9 +33,17 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         return reach.parseCurrency(amount);
     };
 
-    const handleCreateNewGame = (wager: number) => {
+    const handleCreateNewGame = async (wager: number) => {
         console.log(convertCurrencyFromBigNumberToSmallNumber(convertCurrencyFromSmallNumberToBigNumber(wager)));
-        dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+        const balanceBigNum = await reach.balanceOf(playerWalletAccount);
+        const balance = convertCurrencyFromBigNumberToSmallNumber(balanceBigNum);
+        if ((balance + 1 ) > wager) {
+            dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+        }
+        else {
+            alert('Insufficient funds in wallet to set the wager of ' + wager);
+        }
+        
     };
 
     const handlePlayerRoleSelect = (role: participantTitle) => {

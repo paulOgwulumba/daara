@@ -87,8 +87,8 @@ export const main = Reach.App(() => {
   //Alice inputs and publishes wager and deadline duration. Then she pays the wager
   Alice
     .only(() =>{
-    const wager = declassify(interact.wager);
-    const deadline = declassify(interact.deadline);
+      const wager = declassify(interact.wager);
+      const deadline = declassify(interact.deadline);
   });
 
   Alice
