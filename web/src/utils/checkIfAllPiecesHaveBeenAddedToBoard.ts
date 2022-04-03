@@ -11,7 +11,7 @@ import { updateAllPiecesAddedToBoard } from '../redux/slices';
  const checkIfAllPiecesHaveBeenAddedToBoard = (playerTurn: number, playerTwoPiecesInHand: number, dispatch: any) => {
   if (playerTurn === player.SECOND_PLAYER && playerTwoPiecesInHand === 1) {
       //setState(true);
-      dispatch(updateAllPiecesAddedToBoard());
+      dispatch(updateAllPiecesAddedToBoard(true));
   } 
 };
 

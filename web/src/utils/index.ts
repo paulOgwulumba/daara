@@ -1,11 +1,11 @@
-import { fromSome } from '@reach-sh/stdlib/dist/types/shared_backend';
-
 export * from './addPieceToSelectedCell';
 export * from './cellContainsPlayerOnePiece';
 export * from './cellContainsPlayerTwoPiece';
 export * from './checkIfAllPiecesHaveBeenAddedToBoard';
+export * from './decodeGamePlayState';
 export * from './decorateMatchedPieces';
 export * from './deselectPreviouslySelectedCell';
+export * from './encodeGamePlayState';
 export * from './endAttack';
 export * from './endDoublePlay';
 export * from './gamePlay';

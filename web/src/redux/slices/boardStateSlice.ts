@@ -13,8 +13,8 @@ export const boardStateSlice = createSlice({
         updateBoardState: (state, action) => {
             state.boardState = action.payload;
         },
-        updateAllPiecesAddedToBoard: (state) => {
-            state.allPiecesAddedToBoard = true;
+        updateAllPiecesAddedToBoard: (state, action = { payload: true, type: '' }) => {
+            state.allPiecesAddedToBoard = action.payload;
         },
         updateCellOfSelectedPiece: (state, action) => {
             state.cellOfSelectedPiece = action.payload;

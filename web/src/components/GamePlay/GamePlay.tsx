@@ -5,8 +5,10 @@ import { Board } from '../../components';
 import { 
     addPieceToSelectedCell,
     checkIfAllPiecesHaveBeenAddedToBoard,
+    decodeGamePlayState,
     decorateMatchedPieces,
     deselectPreviouslySelectedCell,
+    encodeGamePlayState,
     endAttack,
     endDoublePlay,
     unpackBoardState, 
@@ -42,9 +44,13 @@ function GamePlay() {
     const dispatch = useDispatch();
 
     const boardState = useSelector(Selector.selectBoardState);
-    const playerTurn = useSelector(Selector.selectPlayerTurn);
-    const currentPlayer = useSelector(Selector.selectCurrentPlayer);
+
     const allPiecesAddedToBoard = useSelector(Selector.selectAllPiecesAddedToBoard);
+    const cellOfSelectedPiece = useSelector(Selector.selectCellOfSelectedPiece);
+    const currentPlayer = useSelector(Selector.selectCurrentPlayer);
+
+    const playerTurn = useSelector(Selector.selectPlayerTurn);
+    
     const playerOnePiecesInHand = useSelector(Selector.selectPlayerOnePiecesInHand);
     const playerTwoPiecesInHand = useSelector(Selector.selectPlayerTwoPiecesInHand);
     const playerOnePiecesLeft = useSelector(Selector.selectPlayerOnePiecesLeft);
@@ -52,7 +58,7 @@ function GamePlay() {
     const isPlayerToPlayAgain = useSelector(Selector.selectIsPlayerToPlayAgain);
     const isPlayerToAttackOpponentPieces = useSelector(Selector.selectIsPlayerToAttackOpponentPieces);
     const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft);
-    const cellOfSelectedPiece = useSelector(Selector.selectCellOfSelectedPiece);
+    
     
     const handleClick = (position: cellPosition) => {
         let unpackedBoardState = unpackBoardState(boardState);
@@ -161,6 +167,9 @@ function GamePlay() {
                 }
             }
         }
+
+        console.log(encodeGamePlayState());
+        console.log(decodeGamePlayState(encodeGamePlayState()));
     }
 
     return (
