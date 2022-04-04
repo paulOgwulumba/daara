@@ -13,8 +13,8 @@ const [ isOutcome, B_WINS, DRAW, A_WINS, CONTINUE, TERMINATE] = makeEnum(5);
  */
  const inAgreement = (piecesAlice, piecesBob, computedPiecesAlice, computedPiecesBob) => {
   if (
-    (computedPiecesAlice == piecesAlice) &&
-    (computedPiecesBob == piecesBob)
+    (computedPiecesAlice === piecesAlice) &&
+    (computedPiecesBob === piecesBob)
   ) {
     return true;
   }

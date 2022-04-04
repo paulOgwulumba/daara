@@ -14,6 +14,7 @@ import { encodeGamePlayState, decodeGamePlayState } from './utils';
 import { Selector } from './redux/selectors';
 import Store from './redux/store';
 import { 
+    updateContractAddress,
     updatePlayerWalletAccount, 
     updateCurrentView, 
     updateBoardState, 
@@ -29,6 +30,7 @@ import {
     updatePlayerTwoPiecesLeft,
 } from './redux/slices';
 
+
 export interface IAppProps {
     reach: any,
     reachBackend: Object,
@@ -38,8 +40,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
     const dispatch = useDispatch();
+    
+    let promise: Function = () => {};
 
-    const Interact = {
+    const InteractInterface = {
         getNumberOfPiecesLeft: () => {
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
@@ -61,7 +65,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         dealPiece: () => {
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
-            return boardState;
+            return [boardState, gamePlayState];
         },
 
         updateOpponentMove: (boardState: string, gamePlayState: string) => {
@@ -87,7 +91,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         informDisagreement: () => {
             alert("Values from two players do not match!");
         }
-    }
+    };
 
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
         return reach.formatCurrency(amount, 10);
@@ -98,17 +102,40 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     const handleCreateNewGame = async (wager: number) => {
-        console.log(convertCurrencyFromBigNumberToSmallNumber(convertCurrencyFromSmallNumberToBigNumber(wager)));
         const balanceBigNum = await reach.balanceOf(playerWalletAccount);
         const balance = convertCurrencyFromBigNumberToSmallNumber(balanceBigNum);
 
-        if ((balance) > (wager + 1)) {
-            dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-        }
-        else {
+        if ((balance) < (wager + 1)) {
             alert(`Insufficient funds in wallet to set the wager of ${wager}.`);
+            return;
+        }
+
+        const interact = {
+            ...InteractInterface,
+            wager,
+            deadline: 120,              // deadline of 120 seconds
+        };
+
+        let contract;
+
+        try {
+            contract = await playerWalletAccount.deploy(reachBackend);
         } 
+        catch (err) {
+            alert(err);
+            return;
+        } 
+
+        const contractInfo = await contract?.getInfo();
+
+        const contractAddress = JSON.stringify(contractInfo);
+        
+        dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
+
+    const resolvePromise = () => {
+        promise();
+    }
 
     const handlePlayerRoleSelect = (role: participantTitle) => {
         if (role === participantTitle.DEPLOYER) {
@@ -160,7 +187,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
           </ConditionalRender>
 
           <ConditionalRender isVisible = { currentView === Views.GAME_PLAY_VIEW }>
-              <GamePlayView />
+              <GamePlayView 
+                    resolvePromise = { resolvePromise }
+              />
           </ConditionalRender>
       </div>
     )

@@ -110,6 +110,10 @@ const getCurrentView = () => {
 
 const selectCurrentView = (state: any) => {
   return state.appState.currentView;
+};
+
+const selectContractAddress = (state: any) => {
+    return state.appState.contractAddress;
 }
 
 export const StateGetter = {

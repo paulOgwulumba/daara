@@ -40,7 +40,11 @@ import {
 
 const initialBoardState = `00000_00000_00000_00000_00000`;
 
-function GamePlay() {
+interface IGamePlayProps {
+    resolvePromise: Function,
+}
+
+function GamePlay({ resolvePromise }: IGamePlayProps) {
     const dispatch = useDispatch();
 
     const boardState = useSelector(Selector.selectBoardState);

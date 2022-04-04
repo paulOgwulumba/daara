@@ -1,10 +1,14 @@
 import React from 'react';
 import { GamePlay } from '../components';
 
-export const GamePlayView = () => {
+interface IGamePlayProps {
+    resolvePromise: Function,
+}
+
+export const GamePlayView = ({ resolvePromise }:  IGamePlayProps) => {
     return (
         <>
-            <GamePlay />
+            <GamePlay resolvePromise = {resolvePromise}  />
         </>
-    )
+    );
 };
