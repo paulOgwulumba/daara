@@ -129,6 +129,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const contractInfo = await contract?.getInfo();
 
         const contractAddress = JSON.stringify(contractInfo);
+
+        dispatch(updateContractAddress(contractAddress));
         
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
