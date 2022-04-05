@@ -26,7 +26,7 @@ export const AttacherView = ({ handleReturn, handleJoinGame }: IAttacherViewProp
             <h2>Please enter the contract address to join the game</h2>
             <div>
                 <p>Contract address:</p>
-                <input type={'text'} value = {contractAddress} onChange = { onAddressChange }/>
+                <textarea value = { contractAddress } onChange = { onAddressChange } />
             </div>
             <div>
                 <button onClick = { onJoinGame } >Join game</button>

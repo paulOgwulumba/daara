@@ -59,6 +59,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            console.log("Getting number of pieces left.")
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
             const playerPieces = 
@@ -78,14 +79,18 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         dealPiece: async () => {
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            await awaitPlayerMove();
+            // await awaitPlayerMove();
+            alert("It is your move");
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
             return [boardState, gamePlayState];
         },
 
-        updateOpponentMove: (boardState: string, gamePlayState: string) => {
+        updateOpponentMove: (boardState: any, gamePlayState: any) => {
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            console.log(boardState);
+            console.log(gamePlayState);
+            console.log("updating opponent move");
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
             
             dispatch(updateAllPiecesAddedToBoard(decodedGamePlayState.allPiecesAddedToBoard));
@@ -111,7 +116,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     const acceptWager = (wager: number) => {
-        prompt(`Do you accept a wager of ${wager}?`);
+        alert(`Do you accept a wager of ${wager}?`);
     }
 
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
