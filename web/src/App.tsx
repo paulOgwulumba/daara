@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { ConditionalRender } from './components';
 import { 
+    AttacherView,
     ConnectAccountView, 
     ConnectAccountErrorView,
     DeployerOrAttacherView,
     DeployerSetWagerView,
     GamePlayView, 
+    WaitingForAttacherView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -33,7 +35,7 @@ import {
 
 export interface IAppProps {
     reach: any,
-    reachBackend: Object,
+    reachBackend: any,
 };
 
 const App = ({ reach, reachBackend }: IAppProps) => {
@@ -93,6 +95,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         }
     };
 
+    const acceptWager = (wager: number) => {
+        prompt(`Do you accept a wager of ${wager}?`);
+    }
+
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
         return reach.formatCurrency(amount, 10);
     };
@@ -131,7 +137,27 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const contractAddress = JSON.stringify(contractInfo);
 
         dispatch(updateContractAddress(contractAddress));
+
+        try {
+            dispatch(updateCurrentView(Views.WAITING_FOR_ATTACHER_VIEW));
+            await reachBackend?.Alice(contract, interact);
+            dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+        }
+        catch (err) {
+            alert(err);
+            return;
+        }
+    };
+
+    const handleJoinGame = async (contractAddress: string) => {
+        const contract = await playerWalletAccount?.contract(reachBackend, JSON.parse(contractAddress));
         
+        const interact = {
+            ...InteractInterface,
+            acceptWager,
+        };
+        
+        await reachBackend.Bob(contract, interact);
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
 
@@ -144,7 +170,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentView(Views.DEPLOYER_SET_WAGER_VIEW));
         }
         else {
-            // state change for displaying attacher view goes here.
+            dispatch(updateCurrentView(Views.ATTACHER_VIEW));
         } 
     };
 
@@ -165,7 +191,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     useEffect(() => {
         connectToDefaultAccount();
-    }, []);
+    });
 
     return (
       <div className = 'App'>
@@ -192,6 +218,17 @@ const App = ({ reach, reachBackend }: IAppProps) => {
               <GamePlayView 
                     resolvePromise = { resolvePromise }
               />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.WAITING_FOR_ATTACHER_VIEW }>
+                <WaitingForAttacherView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.WAITING_FOR_ATTACHER_VIEW }>
+                <AttacherView 
+                    handleReturn = { handleReturn }
+                    handleJoinGame = { handleJoinGame }
+                />
           </ConditionalRender>
       </div>
     )

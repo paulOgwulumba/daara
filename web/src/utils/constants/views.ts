@@ -1,7 +1,9 @@
-export enum Views {
+export enum Views { 
     CONNECT_ACCOUNT_VIEW = 0,
     CONNECT_ACCOUNT_ERROR_VIEW = 1,
     DEPLOYER_OR_ATTACHER_VIEW = 2,
     DEPLOYER_SET_WAGER_VIEW = 3,
     GAME_PLAY_VIEW = 4,
+    WAITING_FOR_ATTACHER_VIEW = 5,
+    ATTACHER_VIEW = 6,
 };

@@ -137,6 +137,7 @@ export const Selector = {
     selectBoardState,
     selectAllPiecesAddedToBoard,
     selectCellOfSelectedPiece,
+    selectContractAddress,
     selectCurrentPlayer,
     selectIsPlayerToAttackOpponentPieces,
     selectIsPlayerToPlayAgain,

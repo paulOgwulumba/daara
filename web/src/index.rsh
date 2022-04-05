@@ -1,3 +1,6 @@
+/* eslint-disable no-loop-func */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 'reach 0.1';
 
 const [ isOutcome, B_WINS, DRAW, A_WINS, CONTINUE, TERMINATE] = makeEnum(5);
@@ -48,7 +51,7 @@ const Player = {
   ...hasRandom,
   getNumberOfPiecesLeft: Fun([], Tuple(UInt, UInt)),
   dealPiece: Fun([], Tuple(Bytes(32), Bytes(16))),
-  updateOpponentMove: Fun([Bytes(32), Bytes[16]], Null),
+  updateOpponentMove: Fun([Bytes(32), Bytes(16)], Null),
   informTimeout: Fun([], Null),
   informDisagreement: Fun([], Null)
 };
@@ -112,26 +115,26 @@ export const main = Reach.App(() => {
     //Second player takes first turn
     //Plays a move and publishes it before timeout
     Bob.only(() => {
-      const handBob = declassify(interact.dealPiece());
+      const [handBob, gameStateBob] = declassify(interact.dealPiece());
     });
-    Bob.publish(handBob)
+    Bob.publish(handBob, gameStateBob)
       .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
     commit();
 
     //Alice plays a move and publishes it. This completes a round
     //Also publishes number of pieces she has left after her move
     Alice.only(() => {
-      interact.updateOpponentMove(handBob);
-      const handAlice = declassify(interact.dealPiece());
+      interact.updateOpponentMove(handBob, gameStateBob);
+      const [handAlice, gameStateAlice] = declassify(interact.dealPiece());
       const [ piecesAlice, computedPiecesBob ] = declassify(interact.getNumberOfPiecesLeft());
     });
-    Alice.publish(handAlice, piecesAlice, computedPiecesBob)
+    Alice.publish(handAlice, gameStateAlice, piecesAlice, computedPiecesBob)
       .timeout(relativeTime(deadline), () => closeTo(Bob, informTimeout));
     commit();
 
     //Bob publishes number of pieces he has left at the end of round
     Bob.only(() => {
-      interact.updateOpponentMove(handAlice);
+      interact.updateOpponentMove(handAlice, gameStateAlice);
       const [ piecesBob, computedPiecesAlice ] = declassify(interact.getNumberOfPiecesLeft());
     });
     Bob.publish(piecesBob, computedPiecesAlice);
