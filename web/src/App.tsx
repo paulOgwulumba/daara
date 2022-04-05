@@ -42,13 +42,15 @@ export interface IAppProps {
 const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
+    let init:any;
+    const [promise, setPromise] = useState(init); 
     const dispatch = useDispatch();
     
-    let promise: any;
+    //let promise: any;
 
     const awaitPlayerMove = async () => {
         await new Promise((resolve, reject) => {
-            promise = resolve;
+            setPromise(resolve);
         })
     };
 
@@ -177,7 +179,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         };
         
         reachBackend.Bob(contract, interact);
-        console.log("Joined successfully")
+        console.log("Joined successfully");
         dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
