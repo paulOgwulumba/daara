@@ -18,6 +18,7 @@ import Store from './redux/store';
 import { 
     updateContractAddress,
     updatePlayerWalletAccount, 
+    updateCurrentPlayer,
     updateCurrentView, 
     updateBoardState, 
     updateAllPiecesAddedToBoard,
@@ -43,10 +44,19 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const currentView = useSelector(Selector.selectCurrentView);
     const dispatch = useDispatch();
     
-    let promise: Function = () => {};
+    let promise: any;
+
+    const awaitPlayerMove = async () => {
+        await new Promise((resolve, reject) => {
+            promise = resolve;
+        })
+    };
+
+
 
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
+            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
             const playerPieces = 
@@ -64,13 +74,16 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             return [playerPieces, opponentPieces];
         },
 
-        dealPiece: () => {
+        dealPiece: async () => {
+            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            await awaitPlayerMove();
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
             return [boardState, gamePlayState];
         },
 
         updateOpponentMove: (boardState: string, gamePlayState: string) => {
+            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
             
             dispatch(updateAllPiecesAddedToBoard(decodedGamePlayState.allPiecesAddedToBoard));
@@ -125,31 +138,37 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         let contract;
 
         try {
-            contract = await playerWalletAccount.deploy(reachBackend);
+            console.log("Creating contract");
+            contract = playerWalletAccount.contract(reachBackend);
+            console.log("Contract created successfully")
         } 
         catch (err) {
             alert(err);
+            console.log(err);
             return;
         } 
 
-        const contractInfo = await contract?.getInfo();
+        try {  
+            console.log("Making first publish");
+            reachBackend?.Alice(contract, interact);
 
-        const contractAddress = JSON.stringify(contractInfo);
-
-        dispatch(updateContractAddress(contractAddress));
-
-        try {
+            console.log('Getting contract information');
+            const contractAddress = JSON.stringify(await contract.getInfo(), null, 2);
+            console.log(contractAddress);
+            dispatch(updateContractAddress(contractAddress));
+            console.log("waiting for attacher to join");
             dispatch(updateCurrentView(Views.WAITING_FOR_ATTACHER_VIEW));
-            await reachBackend?.Alice(contract, interact);
-            dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         }
         catch (err) {
             alert(err);
+            console.log(err);
             return;
         }
     };
 
     const handleJoinGame = async (contractAddress: string) => {
+        console.log("Joining the game.")
         const contract = await playerWalletAccount?.contract(reachBackend, JSON.parse(contractAddress));
         
         const interact = {
@@ -157,7 +176,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             acceptWager,
         };
         
-        await reachBackend.Bob(contract, interact);
+        reachBackend.Bob(contract, interact);
+        console.log("Joined successfully")
+        dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
 
@@ -181,8 +202,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const connectToDefaultAccount = async () => {
         try {
             const walletAccount = await reach.getDefaultAccount();
+            console.log("connected");
             dispatch(updatePlayerWalletAccount(walletAccount));
             dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            console.log("connected");
         }
         catch (err) {
             dispatch(updateCurrentView(Views.CONNECT_ACCOUNT_ERROR_VIEW));
@@ -191,7 +214,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     useEffect(() => {
         connectToDefaultAccount();
-    });
+    }, []);
 
     return (
       <div className = 'App'>
@@ -224,7 +247,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <WaitingForAttacherView />
           </ConditionalRender>
 
-          <ConditionalRender isVisible = { currentView === Views.WAITING_FOR_ATTACHER_VIEW }>
+          <ConditionalRender isVisible = { currentView === Views.ATTACHER_VIEW }>
                 <AttacherView 
                     handleReturn = { handleReturn }
                     handleJoinGame = { handleJoinGame }

@@ -23,7 +23,7 @@ import {
     refreshMatchedCells,
     removePieceFromCell,
     selectPieceToBeMoved,
-    toggleCurrentPlayer,
+    //toggleCurrentPlayer,
     togglePlayerTurn,
     isSelectedPieceClickedOnAgain,
 } from '../../utils';
@@ -116,7 +116,7 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                     } 
                     else {
                         togglePlayerTurn(playerTurn, dispatch);
-                        toggleCurrentPlayer(playerTurn, dispatch);
+                        // toggleCurrentPlayer(playerTurn, dispatch);
                         endDoublePlay(dispatch);
                     }  
 
@@ -140,7 +140,7 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                         if (numberOfAttacksLeft < 2) {
                             togglePlayerTurn(playerTurn, dispatch);
 
-                            toggleCurrentPlayer(playerTurn, dispatch);
+                            // toggleCurrentPlayer(playerTurn, dispatch);
                             
                             reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
                             
@@ -172,8 +172,7 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
             }
         }
 
-        console.log(encodeGamePlayState());
-        console.log(decodeGamePlayState(encodeGamePlayState()));
+        resolvePromise();
     }
 
     return (
