@@ -82,6 +82,7 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                 checkIfAllPiecesHaveBeenAddedToBoard(playerTurn, playerTwoPiecesInHand, dispatch);
                 reduceNumberOfPiecesHeldByPlayerThatJustPlayed(playerTurn, playerOnePiecesInHand, playerTwoPiecesInHand, dispatch);
                 togglePlayerTurn(playerTurn, dispatch); 
+                resolvePromise();
             } 
             else {
                 alert(cellAdditionValidityStatus.message);
@@ -121,6 +122,8 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                     }  
 
                     dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
+
+                    resolvePromise();
                 } 
                 else {
                     alert(cellMovingValidityStatus.message);
@@ -150,6 +153,8 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                         } 
 
                         dispatch(updateBoardState(boardStateString));
+
+                        resolvePromise();
                     }
                     else {
                         alert(pieceAttackValidityStatus.message);
@@ -165,21 +170,21 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                     dispatch(updateIsPlayerToPlayAgain(true));
 
                     dispatch(updateCellOfSelectedPiece(position));
+
+                    resolvePromise();
                 }
                 else {
                     alert(pieceSelectionValidationStatus.message);
                 }
             }
         }
-
-        resolvePromise();
     }
 
     return (
         <div className="App">
-        <h2>{`Player ${playerTurn}'s Turn to Play.`}</h2>
-        <p>{`Pieces left in hand: ${playerTurn === player.FIRST_PLAYER? playerOnePiecesInHand : playerTwoPiecesInHand}`}</p>
-        <p>{`Pieces left: ${playerTurn === player.FIRST_PLAYER? playerOnePiecesLeft: playerTwoPiecesLeft}`}</p>
+        <h2>{playerTurn === currentPlayer? 'Your turn to play' : "Your opponent's turn to play"}</h2>
+        <p>{`Pieces left in hand: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesInHand : playerTwoPiecesInHand}`}</p>
+        <p>{`Pieces left: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesLeft: playerTwoPiecesLeft}`}</p>
         <Board 
             boardState = { boardState } 
             numberOfColumns = {5} 

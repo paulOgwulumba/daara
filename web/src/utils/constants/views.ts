@@ -6,4 +6,5 @@ export enum Views {
     GAME_PLAY_VIEW = 4,
     WAITING_FOR_ATTACHER_VIEW = 5,
     ATTACHER_VIEW = 6,
+    CONNECT_ACCOUNT_WITH_MNEMONIC_VIEW = 7,
 };

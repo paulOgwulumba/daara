@@ -10,6 +10,7 @@ import {
     DeployerSetWagerView,
     GamePlayView, 
     WaitingForAttacherView,
+    ConnectAccountWithMnemonicView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -42,6 +43,8 @@ export interface IAppProps {
 const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
+    const playerTurn = useSelector(Selector.selectPlayerTurn);
+    const currentPlayer = useSelector(Selector.selectCurrentPlayer);
     const [promise, setPromise] = useState({resolve: null});
     const dispatch = useDispatch();
 
@@ -75,9 +78,11 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         },
 
         dealPiece: async () => {
-            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            await awaitPlayerMove();
-            // alert("It is your move");
+            let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            let something = playerTurn === currentPlayer? 
+                await awaitPlayerMove() 
+                : 
+                console.log("Skipping your turn for opponent to complete their move...");
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
             return [boardState, gamePlayState];
@@ -87,7 +92,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             console.log(boardState);
             console.log(gamePlayState);
-            console.log("updating opponent move");
+            console.log("Updating opponent move");
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
             
             dispatch(updateAllPiecesAddedToBoard(decodedGamePlayState.allPiecesAddedToBoard));
@@ -182,7 +187,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         
         reachBackend.Bob(contract, interact);
         console.log("Joined successfully");
-        dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
+        dispatch(updateCurrentPlayer(player.FIRST_PLAYER))
         dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
     };
 
@@ -208,15 +213,24 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const connectToDefaultAccount = async () => {
         try {
             const walletAccount = await reach.getDefaultAccount();
-            console.log("connected");
             dispatch(updatePlayerWalletAccount(walletAccount));
             dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
-            console.log("connected");
         }
         catch (err) {
             dispatch(updateCurrentView(Views.CONNECT_ACCOUNT_ERROR_VIEW));
         }
     };
+
+    const connectAccountWithKeyPhrase = async (mnemonic: string) => {
+        try {
+            const walletAccount = await reach.newAccountFromMnemonic(mnemonic);
+            dispatch(updatePlayerWalletAccount(walletAccount));
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+        }
+        catch (e) {
+            alert("Invalid key phrase entered.")
+        }
+    }
 
     useEffect(() => {
         connectToDefaultAccount();
@@ -229,7 +243,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
           </ConditionalRender>
 
           <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_ERROR_VIEW }>
-              <ConnectAccountErrorView />
+              <ConnectAccountErrorView handleReturn = { handleReturn }/>
           </ConditionalRender>
 
           <ConditionalRender isVisible = { currentView === Views.DEPLOYER_OR_ATTACHER_VIEW }>
@@ -257,6 +271,13 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <AttacherView 
                     handleReturn = { handleReturn }
                     handleJoinGame = { handleJoinGame }
+                />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_WITH_MNEMONIC_VIEW }>
+                <ConnectAccountWithMnemonicView 
+                    handleReturn = { handleReturn }
+                    handleConnectAccountWithKeyPhrase = { connectAccountWithKeyPhrase }
                 />
           </ConditionalRender>
       </div>
