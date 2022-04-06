@@ -50,8 +50,8 @@ const winner = (piecesAlice, piecesBob, computedPiecesAlice, computedPiecesBob) 
 const Player = {
   ...hasRandom,
   getNumberOfPiecesLeft: Fun([], Tuple(UInt, UInt)),
-  dealPiece: Fun([], Tuple(Bytes(32), Bytes(16))),
-  updateOpponentMove: Fun([Bytes(32), Bytes(16)], Null),
+  dealPiece: Fun([], Tuple(Bytes(29), Bytes(11))),
+  updateOpponentMove: Fun([Bytes(29), Bytes(11)], Null),
   informTimeout: Fun([], Null),
   informDisagreement: Fun([], Null)
 };

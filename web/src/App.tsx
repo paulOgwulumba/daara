@@ -42,19 +42,16 @@ export interface IAppProps {
 const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
-    let init:any;
-    const [promise, setPromise] = useState(init); 
     const dispatch = useDispatch();
     
-    //let promise: any;
+    let promise;
 
     const awaitPlayerMove = async () => {
         await new Promise((resolve, reject) => {
-            setPromise(resolve);
+            promise = resolve;
+            console.log(promise);
         })
     };
-
-
 
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
@@ -190,7 +187,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     const resolvePromise = () => {
-        promise();
+        console.log(promise);
+        promise('');
     }
 
     const handlePlayerRoleSelect = (role: participantTitle) => {
