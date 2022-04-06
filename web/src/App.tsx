@@ -42,14 +42,14 @@ export interface IAppProps {
 const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
+    const [promise, setPromise] = useState({resolve: null});
     const dispatch = useDispatch();
-    
-    let promise;
 
     const awaitPlayerMove = async () => {
+        console.log("Waiting for player's move");
         await new Promise((resolve, reject) => {
-            promise = resolve;
-            console.log(promise);
+            console.log(promise)
+            setPromise({resolve: resolve});
         })
     };
 
@@ -76,8 +76,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         dealPiece: async () => {
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            // await awaitPlayerMove();
-            alert("It is your move");
+            await awaitPlayerMove();
+            // alert("It is your move");
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
             return [boardState, gamePlayState];
@@ -188,7 +188,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     const resolvePromise = () => {
         console.log(promise);
-        promise('');
+        console.log("Move made");
+        promise.resolve();
     }
 
     const handlePlayerRoleSelect = (role: participantTitle) => {
