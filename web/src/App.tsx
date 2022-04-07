@@ -14,6 +14,7 @@ import {
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
+import { Loader } from './components';
 import { Selector } from './redux/selectors';
 import Store from './redux/store';
 import { 
@@ -46,6 +47,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerTurn = useSelector(Selector.selectPlayerTurn);
     const currentPlayer = useSelector(Selector.selectCurrentPlayer);
     const [promise, setPromise] = useState({resolve: null});
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     const awaitPlayerMove = async () => {
@@ -254,6 +256,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     return (
       <div className = 'App'>
+          <Loader isVisible = { isLoading }/>
+
           <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_VIEW }>
               <ConnectAccountView />
           </ConditionalRender>
