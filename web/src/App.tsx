@@ -79,6 +79,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         dealPiece: async () => {
             let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            const currentPlayer = Store.getState().gamePlayState.currentPlayer;
+            const playerTurn = Store.getState().gamePlayState.playerTurn;
             let something = playerTurn === currentPlayer? 
                 await awaitPlayerMove() 
                 : 

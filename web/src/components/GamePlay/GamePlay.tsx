@@ -89,6 +89,12 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
             }
         }
         else {
+            // Make sure it is this player's turn to play
+            if (currentPlayer !== playerTurn) {
+                alert("It is not your turn to play, please hold on.");
+                return;
+            };
+
             // check if current player selected a piece before
             if (isPlayerToPlayAgain) {  
                
@@ -117,7 +123,6 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                     } 
                     else {
                         togglePlayerTurn(playerTurn, dispatch);
-                        // toggleCurrentPlayer(playerTurn, dispatch);
                         endDoublePlay(dispatch);
                     }  
 
@@ -142,8 +147,6 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
 
                         if (numberOfAttacksLeft < 2) {
                             togglePlayerTurn(playerTurn, dispatch);
-
-                            // toggleCurrentPlayer(playerTurn, dispatch);
                             
                             reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
                             
