@@ -15,3 +15,14 @@ export const Loader = ({ isVisible }: ILoaderProps) => {
         null
     )
 };
+
+export const GameLoader = ({ isVisible }: ILoaderProps) => {
+    return (
+        isVisible?
+        <div className = { Styles.gameLoader }>
+            
+        </div>
+        :
+        null
+    )
+};
