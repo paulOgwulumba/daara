@@ -53,7 +53,8 @@ const Player = {
   dealPiece: Fun([], Tuple(Bytes(29), Bytes(11))),
   updateOpponentMove: Fun([Bytes(29), Bytes(11)], Null),
   informTimeout: Fun([], Null),
-  informDisagreement: Fun([], Null)
+  informDisagreement: Fun([], Null),
+  announceWinner: Fun([], Null)
 };
 
 export const main = Reach.App(() => {
@@ -87,6 +88,15 @@ export const main = Reach.App(() => {
     });
   };
 
+  /**
+   * @description A function that calls the announceWinner interface function on both participants
+   */
+  const announceWinner = () => {
+    each([Alice, Bob], () => {
+      interact.announceWinner();
+    });
+  }
+
   //Alice inputs and publishes wager and deadline duration. Then she pays the wager
   Alice
     .only(() =>{
@@ -111,7 +121,7 @@ export const main = Reach.App(() => {
   invariant (balance() == 2 * wager && isOutcome(outcome));
   while(outcome == CONTINUE) {
     commit();
-
+  
     //Second player takes first turn
     //Plays a move and publishes it before timeout
     Bob.only(() => {
@@ -151,6 +161,7 @@ export const main = Reach.App(() => {
   }
   else {
     transfer(2 * wager).to(outcome == A_WINS ? Alice : Bob);
+    announceWinner();
   }
   commit();
 });

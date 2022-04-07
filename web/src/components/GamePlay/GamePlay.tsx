@@ -173,8 +173,6 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                     dispatch(updateIsPlayerToPlayAgain(true));
 
                     dispatch(updateCellOfSelectedPiece(position));
-
-                    resolvePromise();
                 }
                 else {
                     alert(pieceSelectionValidationStatus.message);

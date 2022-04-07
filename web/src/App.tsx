@@ -116,6 +116,20 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         informDisagreement: () => {
             alert("Values from two players do not match!");
+        }, 
+
+        announceWinner: () => {
+            const currentPlayer = Store.getState().gamePlayState.currentPlayer;
+            const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
+            
+            if (piecesLeft >= 3) {
+                alert("You win!!!");
+                console.log("You win!!");
+            }
+            else {
+                alert("You lose");
+                console.log("You lose");
+            }
         }
     };
 
