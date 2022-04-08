@@ -7,7 +7,7 @@ import { cellPosition } from "./interfaces";
  */
 export const decodeGamePlayState = (encodedState: string) => {
     if (encodedState.length !== 11) {
-        throw 'Invalid string encoding detected.'
+        throw `Invalid string encoding detected. String is ${encodedState.length} characters long instead of 11.`
     }
 
     const allPiecesAddedToBoard = encodedState[0] === 'T'? true : false;
@@ -22,7 +22,7 @@ export const decodeGamePlayState = (encodedState: string) => {
     const playerTwoPiecesLeft = parseInt(encodedState[7]);
     const isPlayerToPlayAgain = encodedState[8] === 'T'? true : false;
     const isPlayerToAttackOpponentPieces = encodedState[9] === 'T'? true : false;
-    const numberOfAttacksLeft = encodedState[10] === 'T'? true : false;
+    const numberOfAttacksLeft = parseInt(encodedState[10]);
     
     return {
         allPiecesAddedToBoard,

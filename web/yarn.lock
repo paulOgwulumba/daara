@@ -1772,10 +1772,10 @@
   dependencies:
     "@randlabs/communication-bridge" "^1.0.0"
 
-"@reach-sh/stdlib@^0.1.9-rc.5":
-  version "0.1.9-rc.5"
-  resolved "https://registry.yarnpkg.com/@reach-sh/stdlib/-/stdlib-0.1.9-rc.5.tgz#91a226b6bef94a09caf6b8909d89a32269b11c9d"
-  integrity sha512-qmzZe7VJ3b9+ukAx2a2jrJODCT0WpzwsdxArUwFnuR9pxN9dgrlEqCX00564+wW33mW9lQnwgPE0njhezPso8w==
+"@reach-sh/stdlib@^0.1.9-rc.6":
+  version "0.1.9-rc.6"
+  resolved "https://registry.yarnpkg.com/@reach-sh/stdlib/-/stdlib-0.1.9-rc.6.tgz#45443d6f49e0dc4664adb42bce8f7c4168a38269"
+  integrity sha512-WUfKPwhfri3tmjPcTeOjNb6Lio9t8ds57d/DYZcOInG9/xTocVVz2EIF7ehitViO1w5KkDOpecjQMp/iJZ5ojQ==
   dependencies:
     "@msgpack/msgpack" "^2.5.1"
     "@randlabs/myalgo-connect" "^1.1.2"
@@ -1789,6 +1789,7 @@
     js-conflux-sdk "git+https://github.com/reach-sh/js-conflux-sdk#v1_6_0_blockNumber"
     jsbi "^3.1.6"
     node-fetch "^2.6.1"
+    tslib "^2.3.1"
     wait-port "^0.2.9"
 
 "@reduxjs/toolkit@^1.8.0":
@@ -6400,9 +6401,9 @@ jest@^27.4.3:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
-"js-conflux-sdk@git+https://github.com/reach-sh/js-conflux-sdk#v1_6_0_blockNumber":
+"js-conflux-sdk@git+https://github.com/reach-sh/js-conflux-sdk.git#v1_6_0_blockNumber":
   version "1.6.0"
-  resolved "git+https://github.com/reach-sh/js-conflux-sdk#6df5f0538c2077a7e29f0be08205b937499a1040"
+  resolved "git+https://github.com/reach-sh/js-conflux-sdk.git#6df5f0538c2077a7e29f0be08205b937499a1040"
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@conflux-dev/conflux-address-js" "^1.0.0"
@@ -9342,7 +9343,7 @@ tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.3:
+tslib@^2.0.3, tslib@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==

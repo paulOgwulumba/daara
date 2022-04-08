@@ -110,6 +110,10 @@ const getCurrentView = () => {
 
 const selectCurrentView = (state: any) => {
   return state.appState.currentView;
+};
+
+const selectContractAddress = (state: any) => {
+    return state.appState.contractAddress;
 }
 
 export const StateGetter = {
@@ -133,6 +137,7 @@ export const Selector = {
     selectBoardState,
     selectAllPiecesAddedToBoard,
     selectCellOfSelectedPiece,
+    selectContractAddress,
     selectCurrentPlayer,
     selectIsPlayerToAttackOpponentPieces,
     selectIsPlayerToPlayAgain,

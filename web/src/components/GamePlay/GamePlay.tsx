@@ -23,7 +23,7 @@ import {
     refreshMatchedCells,
     removePieceFromCell,
     selectPieceToBeMoved,
-    toggleCurrentPlayer,
+    //toggleCurrentPlayer,
     togglePlayerTurn,
     isSelectedPieceClickedOnAgain,
 } from '../../utils';
@@ -40,7 +40,11 @@ import {
 
 const initialBoardState = `00000_00000_00000_00000_00000`;
 
-function GamePlay() {
+interface IGamePlayProps {
+    resolvePromise: Function,
+}
+
+function GamePlay({ resolvePromise }: IGamePlayProps) {
     const dispatch = useDispatch();
 
     const boardState = useSelector(Selector.selectBoardState);
@@ -78,12 +82,19 @@ function GamePlay() {
                 checkIfAllPiecesHaveBeenAddedToBoard(playerTurn, playerTwoPiecesInHand, dispatch);
                 reduceNumberOfPiecesHeldByPlayerThatJustPlayed(playerTurn, playerOnePiecesInHand, playerTwoPiecesInHand, dispatch);
                 togglePlayerTurn(playerTurn, dispatch); 
+                resolvePromise();
             } 
             else {
                 alert(cellAdditionValidityStatus.message);
             }
         }
         else {
+            // Make sure it is this player's turn to play
+            if (currentPlayer !== playerTurn) {
+                alert("It is not your turn to play, please hold on.");
+                return;
+            };
+
             // check if current player selected a piece before
             if (isPlayerToPlayAgain) {  
                
@@ -112,11 +123,12 @@ function GamePlay() {
                     } 
                     else {
                         togglePlayerTurn(playerTurn, dispatch);
-                        toggleCurrentPlayer(playerTurn, dispatch);
                         endDoublePlay(dispatch);
                     }  
 
                     dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
+
+                    resolvePromise();
                 } 
                 else {
                     alert(cellMovingValidityStatus.message);
@@ -135,8 +147,6 @@ function GamePlay() {
 
                         if (numberOfAttacksLeft < 2) {
                             togglePlayerTurn(playerTurn, dispatch);
-
-                            toggleCurrentPlayer(playerTurn, dispatch);
                             
                             reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
                             
@@ -146,6 +156,8 @@ function GamePlay() {
                         } 
 
                         dispatch(updateBoardState(boardStateString));
+
+                        resolvePromise();
                     }
                     else {
                         alert(pieceAttackValidityStatus.message);
@@ -167,16 +179,13 @@ function GamePlay() {
                 }
             }
         }
-
-        console.log(encodeGamePlayState());
-        console.log(decodeGamePlayState(encodeGamePlayState()));
     }
 
     return (
         <div className="App">
-        <h2>{`Player ${playerTurn}'s Turn to Play.`}</h2>
-        <p>{`Pieces left in hand: ${playerTurn === player.FIRST_PLAYER? playerOnePiecesInHand : playerTwoPiecesInHand}`}</p>
-        <p>{`Pieces left: ${playerTurn === player.FIRST_PLAYER? playerOnePiecesLeft: playerTwoPiecesLeft}`}</p>
+        <h2>{playerTurn === currentPlayer? 'Your turn to play' : "Your opponent's turn to play"}</h2>
+        <p>{`Pieces left in hand: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesInHand : playerTwoPiecesInHand}`}</p>
+        <p>{`Pieces left: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesLeft: playerTwoPiecesLeft}`}</p>
         <Board 
             boardState = { boardState } 
             numberOfColumns = {5} 

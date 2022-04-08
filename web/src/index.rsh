@@ -1,3 +1,6 @@
+/* eslint-disable no-loop-func */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 'reach 0.1';
 
 const [ isOutcome, B_WINS, DRAW, A_WINS, CONTINUE, TERMINATE] = makeEnum(5);
@@ -13,8 +16,8 @@ const [ isOutcome, B_WINS, DRAW, A_WINS, CONTINUE, TERMINATE] = makeEnum(5);
  */
  const inAgreement = (piecesAlice, piecesBob, computedPiecesAlice, computedPiecesBob) => {
   if (
-    (computedPiecesAlice == piecesAlice) &&
-    (computedPiecesBob == piecesBob)
+    (computedPiecesAlice === piecesAlice) &&
+    (computedPiecesBob === piecesBob)
   ) {
     return true;
   }
@@ -47,10 +50,11 @@ const winner = (piecesAlice, piecesBob, computedPiecesAlice, computedPiecesBob) 
 const Player = {
   ...hasRandom,
   getNumberOfPiecesLeft: Fun([], Tuple(UInt, UInt)),
-  dealPiece: Fun([], Tuple(Bytes(32), Bytes(16))),
-  updateOpponentMove: Fun([Bytes(32), Bytes[16]], Null),
+  dealPiece: Fun([], Tuple(Bytes(29), Bytes(11))),
+  updateOpponentMove: Fun([Bytes(29), Bytes(11)], Null),
   informTimeout: Fun([], Null),
-  informDisagreement: Fun([], Null)
+  informDisagreement: Fun([], Null),
+  announceWinner: Fun([], Null)
 };
 
 export const main = Reach.App(() => {
@@ -84,6 +88,15 @@ export const main = Reach.App(() => {
     });
   };
 
+  /**
+   * @description A function that calls the announceWinner interface function on both participants
+   */
+  const announceWinner = () => {
+    each([Alice, Bob], () => {
+      interact.announceWinner();
+    });
+  }
+
   //Alice inputs and publishes wager and deadline duration. Then she pays the wager
   Alice
     .only(() =>{
@@ -108,30 +121,30 @@ export const main = Reach.App(() => {
   invariant (balance() == 2 * wager && isOutcome(outcome));
   while(outcome == CONTINUE) {
     commit();
-
+  
     //Second player takes first turn
     //Plays a move and publishes it before timeout
     Bob.only(() => {
-      const handBob = declassify(interact.dealPiece());
+      const [handBob, gameStateBob] = declassify(interact.dealPiece());
     });
-    Bob.publish(handBob)
+    Bob.publish(handBob, gameStateBob)
       .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
     commit();
 
     //Alice plays a move and publishes it. This completes a round
     //Also publishes number of pieces she has left after her move
     Alice.only(() => {
-      interact.updateOpponentMove(handBob);
-      const handAlice = declassify(interact.dealPiece());
+      interact.updateOpponentMove(handBob, gameStateBob);
+      const [handAlice, gameStateAlice] = declassify(interact.dealPiece());
       const [ piecesAlice, computedPiecesBob ] = declassify(interact.getNumberOfPiecesLeft());
     });
-    Alice.publish(handAlice, piecesAlice, computedPiecesBob)
+    Alice.publish(handAlice, gameStateAlice, piecesAlice, computedPiecesBob)
       .timeout(relativeTime(deadline), () => closeTo(Bob, informTimeout));
     commit();
 
     //Bob publishes number of pieces he has left at the end of round
     Bob.only(() => {
-      interact.updateOpponentMove(handAlice);
+      interact.updateOpponentMove(handAlice, gameStateAlice);
       const [ piecesBob, computedPiecesAlice ] = declassify(interact.getNumberOfPiecesLeft());
     });
     Bob.publish(piecesBob, computedPiecesAlice);
@@ -148,6 +161,7 @@ export const main = Reach.App(() => {
   }
   else {
     transfer(2 * wager).to(outcome == A_WINS ? Alice : Bob);
+    announceWinner();
   }
   commit();
 });

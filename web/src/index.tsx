@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { loadStdlib } from '@reach-sh/stdlib';
-import MyAlgoConnect from '@reach-sh/stdlib/ALGO_MyAlgoConnect';
+import { ALGO_MyAlgoConnect as MyAlgoConnect }  from '@reach-sh/stdlib';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
