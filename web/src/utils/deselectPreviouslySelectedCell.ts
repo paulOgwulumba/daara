@@ -1,6 +1,7 @@
 import { cellPosition } from './interfaces';
 import { cellState, player } from './constants';
 import { stringifyBoardState } from '.';
+import { updateBoardState } from '../redux/slices';
 
 /**
  * @description This method deselects a previously selected cell.
@@ -13,14 +14,15 @@ import { stringifyBoardState } from '.';
     unpackedBoardState: Array<Array<number>>, 
     playerTurn: number, 
     position: cellPosition, 
-    setState: Function
+    dispatch: any,
 ) => {
     unpackedBoardState[position.Y][position.X] = 
     playerTurn === player.FIRST_PLAYER? 
         cellState.CELL_CONTAINING_PIECE_PLAYER_1
         : 
         cellState.CELL_CONTAINING_PIECE_PLAYER_2
-    setState(stringifyBoardState(unpackedBoardState));
+    // setState(stringifyBoardState(unpackedBoardState));
+    dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
 };
 
 export { deselectPreviouslySelectedCell };

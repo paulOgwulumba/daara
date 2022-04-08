@@ -1,4 +1,5 @@
 import { player } from './constants';
+import { updatePlayerOnePiecesInHand, updatePlayerTwoPiecesInHand } from '../redux/slices';
 
 /**
  * @description This method removes a piece from the hand of the player that just played.
@@ -10,15 +11,14 @@ import { player } from './constants';
  */
 const reduceNumberOfPiecesHeldByPlayerThatJustPlayed = (
     playerTurn: number, 
-    setStatePlayer1: Function, 
-    setStatePlayer2: Function, 
     playerOnePiecesInHand: number, 
-    playerTwoPiecesInHand: number
+    playerTwoPiecesInHand: number,
+    dispatch: any, 
 ) => {
     playerTurn === player.FIRST_PLAYER? 
-    setStatePlayer1(playerOnePiecesInHand - 1) 
+    dispatch(updatePlayerOnePiecesInHand(playerOnePiecesInHand - 1)) //setStatePlayer1(playerOnePiecesInHand - 1) 
     :
-    setStatePlayer2(playerTwoPiecesInHand - 1)
+    dispatch(updatePlayerTwoPiecesInHand(playerTwoPiecesInHand - 1)) //setStatePlayer2(playerTwoPiecesInHand - 1)
 };
 
 export { reduceNumberOfPiecesHeldByPlayerThatJustPlayed };
