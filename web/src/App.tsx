@@ -96,10 +96,14 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const playerTurn = Store.getState().gamePlayState.playerTurn;
             setIsGameLoading(false);
-            let something = playerTurn === currentPlayer? 
-                await awaitPlayerMoveOrSkipIfGameHasEnded() 
-                : 
+            
+            if (playerTurn === currentPlayer) {
+                setIsGameLoading(false);
+                await awaitPlayerMoveOrSkipIfGameHasEnded(); 
+            }
+            else {
                 console.log("Skipping your turn for opponent to complete their move...");
+            }
 
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
@@ -157,10 +161,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
         return reach.formatCurrency(amount, 10);
-    };
-
-    const convertCurrencyFromSmallNumberToBigNumber = (amount: number) => {
-        return reach.parseCurrency(amount);
     };
 
     const handleCreateNewGame = async (wager: number) => {
@@ -229,6 +229,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             };
             
             reachBackend.Bob(contract, interact);
+            setIsGameLoading(true);
             setIsLoading(false);
             console.log("Joined successfully");
             dispatch(updateCurrentPlayer(player.FIRST_PLAYER))
