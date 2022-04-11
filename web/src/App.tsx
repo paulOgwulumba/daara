@@ -50,7 +50,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const dispatch = useDispatch();
 
     const awaitPlayerMove = async () => {
-        console.log("Waiting for player's move");
         await new Promise((resolve, reject) => {
             console.log(promise)
             setPromise({resolve: resolve});
@@ -218,7 +217,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     const handleJoinGame = async (contractAddress: string) => {
         setIsLoading(true);
-        console.log("Joining the game.")
         
         try {
             const contract = await playerWalletAccount?.contract(reachBackend, JSON.parse(contractAddress));
@@ -231,19 +229,16 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             reachBackend.Bob(contract, interact);
             setIsGameLoading(true);
             setIsLoading(false);
-            console.log("Joined successfully");
+            
             dispatch(updateCurrentPlayer(player.FIRST_PLAYER))
             dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
         } catch (err) {
-            console.log(err);
             setIsLoading(false);
             return;
         }
     };
 
     const resolvePromise = () => {
-        console.log(promise);
-        console.log("Move made");
         setIsGameLoading(true);
         promise.resolve();
     }
@@ -284,7 +279,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     }
 
     useEffect(() => {
-        connectToDefaultAccount();
+        // connectToDefaultAccount();
     }, []);
 
     return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import './GamePlay.css';
+import styles from './GamePlay.module.css';
 import { Board } from '../../components';
 import { 
     addPieceToSelectedCell,
@@ -182,16 +182,23 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
     }
 
     return (
-        <div className="App">
-        <h2>{playerTurn === currentPlayer? 'Your turn to play' : "Your opponent's turn to play"}</h2>
-        <p>{`Pieces left in hand: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesInHand : playerTwoPiecesInHand}`}</p>
-        <p>{`Pieces left: ${currentPlayer === player.FIRST_PLAYER? playerOnePiecesLeft: playerTwoPiecesLeft}`}</p>
-        <Board 
-            boardState = { boardState } 
-            numberOfColumns = {5} 
-            numberOfRows = {5}
-            handleCellClick = { handleClick }
-        />
+        <div className={styles.App}>
+            <div className={styles["player-info"]}>
+                <p>Your Info</p>
+                <p>No. of pieces on the board:</p>
+                <p>No. of pieces left: </p>
+            </div>
+            <Board 
+                boardState = { boardState } 
+                numberOfColumns = {5} 
+                numberOfRows = {5}
+                handleCellClick = { handleClick }
+            />
+            <div className={styles["opponent-info"]}>
+                <p>Opponent Info</p>
+                <p>No. of pieces on the board:</p>
+                <p>No. of pieces left: </p>
+            </div>
         </div>
     );
 };
