@@ -113,3 +113,11 @@
     padding: 8px 10px;
     text-align: center;
 }
+
+.contract-address {
+    background-color: #fff;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    padding: 20px;
+    color: #303030;
+    font-size: 14px;
+}

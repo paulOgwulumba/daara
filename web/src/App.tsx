@@ -45,15 +45,22 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
     const [promise, setPromise] = useState({resolve: null});
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false); /////////
     const [isGameLoading, setIsGameLoading] = useState(false);;
     const [mnemonic, setMnemonic] = useState('');
+    const [contractAddressEntry, setContractAddressEntry] = useState('');
+    const [displayContractAddressError, setDisplayContractAddressError] = useState(false);
     const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
     const dispatch = useDispatch();
 
     const handleMnemonicChange = (value: string) => {
         setMnemonic(value);
         setDisplayMnemonicError(false);
+    };
+
+    const handleContractAddressChange = (value: string) => {
+        setContractAddressEntry(value);
+        setDisplayContractAddressError(false);
     }
 
     const awaitPlayerMove = async () => {
@@ -239,6 +246,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
         } catch (err) {
             setIsLoading(false);
+            setDisplayContractAddressError(true);
             return;
         }
     };
@@ -327,6 +335,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <AttacherView 
                     handleReturn = { handleReturn }
                     handleJoinGame = { handleJoinGame }
+                    contractAddress = { contractAddressEntry }
+                    handleChange = { handleContractAddressChange }
+                    isError  = { displayContractAddressError }
                 />
           </ConditionalRender>
 

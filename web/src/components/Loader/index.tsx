@@ -1,5 +1,5 @@
 import React from 'react';
-import Styles from './Loader.module.css';
+import styles from './Loader.module.css';
 
 interface ILoaderProps {
     isVisible: boolean,
@@ -8,8 +8,13 @@ interface ILoaderProps {
 export const Loader = ({ isVisible }: ILoaderProps) => {
     return (
         isVisible?
-        <div className = { Styles.loader }>
-            
+        <div className = { styles["loader-wrapper"] }>
+            <div className = {styles['loader']}>
+                <div className = {styles['loader-blue']}></div>
+                <div className = {styles['loader-red']}></div>
+                <div className = {styles['loader-red']}></div>
+                <div className = {styles['loader-blue']}></div>
+            </div>
         </div>
         :
         null
@@ -19,7 +24,7 @@ export const Loader = ({ isVisible }: ILoaderProps) => {
 export const GameLoader = ({ isVisible }: ILoaderProps) => {
     return (
         isVisible?
-        <div className = { Styles.gameLoader }>
+        <div className = { styles.gameLoader }>
             
         </div>
         :

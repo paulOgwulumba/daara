@@ -1,16 +1,22 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Selector } from '../redux/selectors/index';
+import style from './View.module.css';
 
 export const WaitingForAttacherView = () => {
     const contractAddress = useSelector(Selector.selectContractAddress);
     return (
         <div>
-            <h2>
-                Waiting for a player to accept your game play request.
-                <br />
-                Show player 2 this contract address: { contractAddress }
-            </h2>
+            <p className={style["message"]}>
+                Waiting for a player to join your game.
+                
+            </p>
+            <p className={style["message"]}>
+                Share the contract information below with them:
+            </p>
+            <p className={style["contract-address"]}>
+                { contractAddress }
+            </p>
         </div>
     )
 };
