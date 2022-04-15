@@ -37,14 +37,19 @@ import {
     updateIsPlayerToAttackOpponentPieces,
     updateIsPlayerToPlayAgain,
  } from '../../redux/slices';
+import { PiecesLeft } from './PiecesLeft';
+import { PiecesCaptured } from './PiecesCaptured';
+import { PiecesInHand } from './PiecesInHand';
+import { PlayerTurnAnimator } from './PlayerTurnAnimator';
 
 const initialBoardState = `00000_00000_00000_00000_00000`;
 
 interface IGamePlayProps {
     resolvePromise: Function,
+    isGameLoading: boolean,
 }
 
-function GamePlay({ resolvePromise }: IGamePlayProps) {
+function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
     const dispatch = useDispatch();
 
     const boardState = useSelector(Selector.selectBoardState);
@@ -145,10 +150,10 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
 
                         let boardStateString = stringifyBoardState(unpackedBoardState);
 
+                        reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
+
                         if (numberOfAttacksLeft < 2) {
                             togglePlayerTurn(playerTurn, dispatch);
-                            
-                            reduceNumberOfPiecesOfOpponentByOne(currentPlayer, playerOnePiecesLeft, playerTwoPiecesLeft, dispatch);
                             
                             endAttack(dispatch);
                         
@@ -182,11 +187,31 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
     }
 
     return (
+      <>
         <div className={styles.App}>
-            <div className={styles["player-info"]}>
-                <p>Your Info</p>
-                <p>No. of pieces on the board:</p>
-                <p>No. of pieces left: </p>
+            <div className={styles["player-info-overview"]}>
+                <div className = {styles["player-info-title-wrapper"]}>
+                  <p className = {styles["player-info-title"]}>
+                      You
+                  </p>
+                  
+                  <PlayerTurnAnimator isActive = { !isGameLoading } title='You'/>
+                  
+                </div>
+                <div className={styles["player-info"]}>
+                    <p className={styles["player-info-heading"]}>Pieces Left</p>
+                    <PiecesLeft 
+                        currentPlayer = { currentPlayer } 
+                        piecesLeft = { currentPlayer === player.FIRST_PLAYER? playerOnePiecesLeft : playerTwoPiecesLeft }
+                    />
+                </div>
+                <div className={styles["player-info"]}>
+                    <p className={styles["player-info-heading"]}>Pieces Captured</p>
+                    <PiecesCaptured
+                        opponent = { currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER : player.FIRST_PLAYER } 
+                        piecesLeft = { currentPlayer === player.FIRST_PLAYER? playerTwoPiecesLeft : playerOnePiecesLeft }
+                    />
+                </div>
             </div>
             <Board 
                 boardState = { boardState } 
@@ -194,12 +219,33 @@ function GamePlay({ resolvePromise }: IGamePlayProps) {
                 numberOfRows = {5}
                 handleCellClick = { handleClick }
             />
-            <div className={styles["opponent-info"]}>
-                <p>Opponent Info</p>
-                <p>No. of pieces on the board:</p>
-                <p>No. of pieces left: </p>
+            <div className={styles["player-info-overview"]}>
+                <div className = {styles["player-info-title-wrapper"]}>
+                    <p className = {styles["player-info-title"]}>
+                        Opponent
+                    </p>
+                    
+                    <PlayerTurnAnimator isActive = { isGameLoading } title='Opponent'/>
+                </div>
+                <div className={styles["player-info"]}>
+                    <p className={styles["player-info-heading"]}>Pieces Left</p>
+                    <PiecesLeft 
+                        currentPlayer = { currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER : player.FIRST_PLAYER } 
+                        piecesLeft = { currentPlayer === player.FIRST_PLAYER? playerTwoPiecesLeft : playerOnePiecesLeft }
+                    />
+                </div>
+                <div className={styles["player-info"]}>
+                    <p className={styles["player-info-heading"]}>Pieces Captured</p>
+                    <PiecesCaptured
+                        opponent = { currentPlayer === player.FIRST_PLAYER? currentPlayer : player.SECOND_PLAYER } 
+                        piecesLeft = { currentPlayer === player.FIRST_PLAYER? playerOnePiecesLeft : playerTwoPiecesLeft }
+                    />
+                </div>
             </div>
         </div>
+
+        <PiecesInHand />
+      </>
     );
 };
 

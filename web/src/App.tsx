@@ -47,11 +47,17 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const [promise, setPromise] = useState({resolve: null});
     const [isLoading, setIsLoading] = useState(false)
     const [isGameLoading, setIsGameLoading] = useState(false);;
+    const [mnemonic, setMnemonic] = useState('');
+    const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
     const dispatch = useDispatch();
 
+    const handleMnemonicChange = (value: string) => {
+        setMnemonic(value);
+        setDisplayMnemonicError(false);
+    }
+
     const awaitPlayerMove = async () => {
-        await new Promise((resolve, reject) => {
-            console.log(promise)
+        await new Promise((resolve) => {
             setPromise({resolve: resolve});
         })
     };
@@ -61,6 +67,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
             
         if (piecesLeft >= 3) {
+            setIsGameLoading(false);
             await awaitPlayerMove();
         }
         else {
@@ -94,10 +101,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const playerTurn = Store.getState().gamePlayState.playerTurn;
-            setIsGameLoading(false);
             
-            if (playerTurn === currentPlayer) {
-                setIsGameLoading(false);
+            if (playerTurn === currentPlayer) {      
                 await awaitPlayerMoveOrSkipIfGameHasEnded(); 
             }
             else {
@@ -274,12 +279,12 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
         }
         catch (e) {
-            alert("Invalid key phrase entered.")
+            setDisplayMnemonicError(true);
         }
     }
 
     useEffect(() => {
-        // connectToDefaultAccount();
+        connectToDefaultAccount();
     }, []);
 
     return (
@@ -310,6 +315,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
           <ConditionalRender isVisible = { currentView === Views.GAME_PLAY_VIEW }>
               <GamePlayView 
                     resolvePromise = { resolvePromise }
+                    isGameLoading = { isGameLoading }
               />
           </ConditionalRender>
 
@@ -328,6 +334,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <ConnectAccountWithMnemonicView 
                     handleReturn = { handleReturn }
                     handleConnectAccountWithKeyPhrase = { connectAccountWithKeyPhrase }
+                    handleChange = { handleMnemonicChange }
+                    isError = { displayMnemonicError }
+                    mnemonic = { mnemonic }
                 />
           </ConditionalRender>
       </div>

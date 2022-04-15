@@ -64,6 +64,10 @@ const selectPlayerTurn = (state: any) => {
     return state.gamePlayState.playerTurn;
 };
 
+const selectStartingNumberOfPieces = (state: any) => {
+    return state.playerState.startingNumberOfPieces;
+}
+
 const getPlayerOnePiecesInHand = () => {
     return Store.getState().playerState.playerOnePiecesInHand;
 };
@@ -149,4 +153,5 @@ export const Selector = {
     selectPlayerTwoPiecesLeft,
     selectPlayerWalletAccount,
     selectCurrentView,
+    selectStartingNumberOfPieces,
 }

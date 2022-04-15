@@ -58,11 +58,13 @@
 }
 
 .boardPiecePlayerOne {
-    background-color: rgb(226, 157, 157);
+    background-color: maroon;
+    border: 1px inset rgb(158, 89, 89);
 }
 
 .boardPiecePlayerTwo {
-    background-color: blue;
+    background-color: rgb(14, 14, 107);
+    border: 1px inset rgb(37, 37, 241);
 }
 
 .boardPieceHide {
