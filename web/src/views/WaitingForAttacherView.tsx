@@ -14,9 +14,8 @@ export const WaitingForAttacherView = () => {
             <p className={style["message"]}>
                 Share the contract information below with them:
             </p>
-            <p className={style["contract-address"]}>
-                { contractAddress }
-            </p>
+            <textarea value = { contractAddress } className={style['text-area-input']} disabled={true}/>
+            
         </div>
     )
 };

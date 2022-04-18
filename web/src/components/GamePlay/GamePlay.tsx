@@ -195,7 +195,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                       You
                   </p>
                   
-                  <PlayerTurnAnimator isActive = { !isGameLoading } title='You'/>
+                  <PlayerTurnAnimator isActive = { !isGameLoading } title='Your turn'/>
                   
                 </div>
                 <div className={styles["player-info"]}>
@@ -225,7 +225,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                         Opponent
                     </p>
                     
-                    <PlayerTurnAnimator isActive = { isGameLoading } title='Opponent'/>
+                    <PlayerTurnAnimator isActive = { isGameLoading } title="Opponent's turn"/>
                 </div>
                 <div className={styles["player-info"]}>
                     <p className={styles["player-info-heading"]}>Pieces Left</p>

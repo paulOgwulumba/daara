@@ -6,3 +6,5 @@ export * from './DeployerOrAttacherView';
 export * from './DeployerSetWagerView';
 export * from './GamePlayView';
 export * from './WaitingForAttacherView';
+export * from './WinnerView';
+export * from './LoserView';
