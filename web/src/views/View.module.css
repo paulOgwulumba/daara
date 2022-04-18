@@ -1,0 +1,123 @@
+.loader {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 200px;
+    height: 200px;
+    animation: Rotate infinite 2s linear;
+    filter: blur(15px);
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-blue {
+    background-color: rgb(14, 14, 107);
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    margin: 0 20px;
+}
+
+.loader-red {
+    background-color: maroon;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    margin: 0 20px;
+    background: linear-gradient(to left, #ff5770, #e4428d, #c42da8, #9e16c3, #6501de, #9e16c3, #c42da8, #e4428d, #ff5770);
+    background-size: 200% 200%;
+    -webkit-animation: animateGlow 1.25s linear infinite;
+    animation: animateGlow 1.25s linear infinite;
+}
+
+@-webkit-keyframes animateGlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+}
+
+@keyframes animateGlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+}
+
+@keyframes Rotate {
+    from {
+      transform: rotate(0deg) scale(0.5);
+    }
+    to {
+      transform: rotate(360deg) scale(0.5);
+    }
+}
+
+.message {
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #dbcfcf;
+    margin: 10px;
+    text-align: left;
+    width: inherit;
+}
+
+.button {
+    font-size: 14px;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    margin-top: 20px;
+    margin-right: 20px;
+    cursor: pointer;
+    text-transform: capitalize;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #474646;
+}
+
+.button:hover {
+    transform: scale(1.01);
+}
+
+.text-area-input {
+    width: 480px;
+    height: 100px;
+    padding: 10px;
+    background-color: #dbcfcf;
+}
+
+.form-wrapper {
+    padding: 20px;
+    border: 1px #858585 solid;
+}
+
+.form-error-message {
+    font-size: 10px;
+    color: tomato;
+    text-align: left;
+}
+
+.hide {
+    display: none;
+}
+
+.input {
+    border-radius: 6px;
+    border: none;
+    width: 100px;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.contract-address {
+    background-color: #fff;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    padding: 20px;
+    color: #303030;
+    font-size: 14px;
+}

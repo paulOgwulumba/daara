@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styles from './View.module.css';
 
 export const ConnectAccountView = () => {
     const loadingText = '...';
@@ -19,9 +20,13 @@ export const ConnectAccountView = () => {
 
     return (
         <div>
-            <h2>
-                { `Connecting to your account${loader}` }
-            </h2>
+            
+            <div className = {styles['loader']}>
+                <div className = {styles['loader-blue']}></div>
+                <div className = {styles['loader-red']}></div>
+                <div className = {styles['loader-red']}></div>
+                <div className = {styles['loader-blue']}></div>
+            </div>
         </div>
     )
 };

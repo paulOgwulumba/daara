@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialPieces = 3;
+const initialPieces = 6;
 
 export const playerStateSlice = createSlice({
     name: 'playerState',
     initialState: {
+        startingNumberOfPieces: initialPieces,
         playerOnePiecesInHand: initialPieces,
         playerOnePiecesLeft: initialPieces,
         playerTwoPiecesInHand: initialPieces,

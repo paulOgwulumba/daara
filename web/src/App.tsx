@@ -45,14 +45,26 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
     const [promise, setPromise] = useState({resolve: null});
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false); /////////
     const [isGameLoading, setIsGameLoading] = useState(false);;
+    const [mnemonic, setMnemonic] = useState('');
+    const [contractAddressEntry, setContractAddressEntry] = useState('');
+    const [displayContractAddressError, setDisplayContractAddressError] = useState(false);
+    const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
     const dispatch = useDispatch();
 
+    const handleMnemonicChange = (value: string) => {
+        setMnemonic(value);
+        setDisplayMnemonicError(false);
+    };
+
+    const handleContractAddressChange = (value: string) => {
+        setContractAddressEntry(value);
+        setDisplayContractAddressError(false);
+    }
+
     const awaitPlayerMove = async () => {
-        console.log("Waiting for player's move");
-        await new Promise((resolve, reject) => {
-            console.log(promise)
+        await new Promise((resolve) => {
             setPromise({resolve: resolve});
         })
     };
@@ -62,6 +74,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
             
         if (piecesLeft >= 3) {
+            setIsGameLoading(false);
             await awaitPlayerMove();
         }
         else {
@@ -95,11 +108,13 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const playerTurn = Store.getState().gamePlayState.playerTurn;
-            setIsGameLoading(false);
-            let something = playerTurn === currentPlayer? 
-                await awaitPlayerMoveOrSkipIfGameHasEnded() 
-                : 
+            
+            if (playerTurn === currentPlayer) {      
+                await awaitPlayerMoveOrSkipIfGameHasEnded(); 
+            }
+            else {
                 console.log("Skipping your turn for opponent to complete their move...");
+            }
 
             const boardState = Store.getState().boardState.boardState;
             const gamePlayState = encodeGamePlayState();
@@ -159,10 +174,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         return reach.formatCurrency(amount, 10);
     };
 
-    const convertCurrencyFromSmallNumberToBigNumber = (amount: number) => {
-        return reach.parseCurrency(amount);
-    };
-
     const handleCreateNewGame = async (wager: number) => {
         const balanceBigNum = await reach.balanceOf(playerWalletAccount);
         const balance = convertCurrencyFromBigNumberToSmallNumber(balanceBigNum);
@@ -218,7 +229,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     const handleJoinGame = async (contractAddress: string) => {
         setIsLoading(true);
-        console.log("Joining the game.")
         
         try {
             const contract = await playerWalletAccount?.contract(reachBackend, JSON.parse(contractAddress));
@@ -229,20 +239,19 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             };
             
             reachBackend.Bob(contract, interact);
+            setIsGameLoading(true);
             setIsLoading(false);
-            console.log("Joined successfully");
+            
             dispatch(updateCurrentPlayer(player.FIRST_PLAYER))
             dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
         } catch (err) {
-            console.log(err);
             setIsLoading(false);
+            setDisplayContractAddressError(true);
             return;
         }
     };
 
     const resolvePromise = () => {
-        console.log(promise);
-        console.log("Move made");
         setIsGameLoading(true);
         promise.resolve();
     }
@@ -278,7 +287,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
         }
         catch (e) {
-            alert("Invalid key phrase entered.")
+            setDisplayMnemonicError(true);
         }
     }
 
@@ -314,6 +323,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
           <ConditionalRender isVisible = { currentView === Views.GAME_PLAY_VIEW }>
               <GamePlayView 
                     resolvePromise = { resolvePromise }
+                    isGameLoading = { isGameLoading }
               />
           </ConditionalRender>
 
@@ -325,6 +335,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <AttacherView 
                     handleReturn = { handleReturn }
                     handleJoinGame = { handleJoinGame }
+                    contractAddress = { contractAddressEntry }
+                    handleChange = { handleContractAddressChange }
+                    isError  = { displayContractAddressError }
                 />
           </ConditionalRender>
 
@@ -332,6 +345,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                 <ConnectAccountWithMnemonicView 
                     handleReturn = { handleReturn }
                     handleConnectAccountWithKeyPhrase = { connectAccountWithKeyPhrase }
+                    handleChange = { handleMnemonicChange }
+                    isError = { displayMnemonicError }
+                    mnemonic = { mnemonic }
                 />
           </ConditionalRender>
       </div>

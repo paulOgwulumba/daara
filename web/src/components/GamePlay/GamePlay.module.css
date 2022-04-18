@@ -1,0 +1,235 @@
+.App {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100vw;
+    background-color: #282c34;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  h2 {
+    color: #fff;
+  }
+  
+  p {
+    color: #fff;
+  }
+
+  .hide {
+    display: none;
+  }
+
+  .player-info-heading {
+      background-color: #36454F;
+      padding: 5px 15px;
+      border: 1px inset rgb(126, 124, 124);
+      text-transform: uppercase;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #928484;
+      font-size: 12px;
+  }
+
+  .player-info-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+  }
+
+  .player-info-title-wrapper {
+      margin-bottom: 40px;
+  }
+
+  .player-info-title {
+      padding: 10px 5px;
+      border: 1px inset rgb(134, 129, 129);
+      text-transform: uppercase;
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      font-size: 10px;
+      text-align: left;
+      color: rgb(201, 182, 182);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
+      z-index: 2;
+  }
+
+  .player-info-title-animator {
+      position: absolute;
+      top: 25px;
+      width: 125px;
+      padding: 10px 5px;
+      text-transform: uppercase;
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      font-size: 10px;
+      text-align: left;
+      color: rgb(201, 182, 182);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
+      z-index: 1;
+      transform: scale(1.2) translateZ(0);
+      filter: blur(15px);
+      background: linear-gradient(to left, #ff5770, #e4428d, #c42da8, #9e16c3, #6501de, #9e16c3, #c42da8, #e4428d, #ff5770);
+      background-size: 200% 200%;
+      -webkit-animation: animateGlow 1.25s linear infinite;
+              animation: animateGlow 1.25s linear infinite;
+  }
+
+  .player-info-title-animator-helper {
+      position: absolute;
+      top: 25px;
+      background-color: #282c34;
+      width: 135px;
+      padding: 10px 5px;
+      border: 1px inset rgb(134, 129, 129);
+      text-transform: uppercase;
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      font-size: 10px;
+      text-align: left;
+      color: rgb(201, 182, 182);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
+      z-index: 2;
+  }
+  
+  @-webkit-keyframes animateGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 200% 50%;
+      }
+  }
+  
+  @keyframes animateGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 200% 50%;
+      }
+  }
+
+  .player-pieces-in-hand-wrapper {
+      display: flex;
+      flex-direction: row;
+      width: fit-content;
+      height: 15px;
+      margin-top: 20px;;
+      border: 1px inset rgb(126, 124, 124);
+      padding: 15px;
+      border-radius: 8px;
+      align-items: center;
+  }
+
+  .player-pieces-in-hand-inner-wrapper-1 {
+      display: flex;
+      flex-direction: row;
+      width: 190px;
+  }
+
+  .player-pieces-in-hand-inner-wrapper-2 {
+      display: flex;
+      flex-direction: row-reverse;
+      width: 190px;
+  }
+
+  .player-one-pieces-in-hand {
+      height: 24px;
+      width: 24px;
+      background-color: maroon;
+      border-radius: 24px;
+      margin-left: 3px;
+      border: 1px inset rgb(158, 89, 89);
+  }
+
+  .player-two-pieces-in-hand {
+      height: 24px;
+      width: 24px;
+      background-color: rgb(14, 14, 107);
+      border-radius: 24px;
+      margin-left: 3px;
+      border: 1px inset rgb(37, 37, 241);
+  }
+
+  .player-pieces-left-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: inherit;
+      align-items: center;
+      justify-content: center;
+      border: 1px inset rgb(126, 124, 124);
+      padding: 15px;
+      border-radius: 8px;
+  }
+
+  .player-pieces-left-inner-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 80px;
+      align-items: center;
+      justify-content: space-between;
+  }
+
+  .player-one-pieces-left {
+      height: 32px;
+      width: 32px;
+      background-color: maroon;
+      border-radius: 32px;
+      margin: 5px 0px;
+      border: 1px inset rgb(158, 89, 89);
+  }
+
+  .player-two-pieces-left {
+      height: 32px;
+      width: 32px;
+      background-color: rgb(14, 14, 107);
+      border-radius: 32px;
+      margin: 5px 0px;
+      border: 1px inset rgb(37, 37, 241);
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes glow {
+      from {
+          box-shadow: 2px inset white;
+      }
+      to {
+          box-shadow: 10px inset white;
+      }
+  }
+  
