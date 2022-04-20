@@ -8,6 +8,7 @@ export const boardStateSlice = createSlice({
         cellOfSelectedPiece: {
             X: 0, Y: 0,
         },
+        boardStateArchive: ['00000_00000_00000_00000_00000'],
     },
     reducers: {
         updateBoardState: (state, action) => {
@@ -18,10 +19,24 @@ export const boardStateSlice = createSlice({
         },
         updateCellOfSelectedPiece: (state, action) => {
             state.cellOfSelectedPiece = action.payload;
+        },
+        updateBoardStateArchive: (state, action) => {
+            let tempArchive = [];
+
+            for (let archive of state.boardStateArchive) {
+                tempArchive.push(archive);
+            }
+
+            tempArchive.push(action.payload);
+
+            state.boardStateArchive = tempArchive;
+        },
+        refreshBoardStateArchive: (state, action) => {
+            state.boardStateArchive = ['00000_00000_00000_00000_00000'];
         }
     }
 });
 
-export const { updateBoardState, updateAllPiecesAddedToBoard, updateCellOfSelectedPiece } = boardStateSlice.actions;
+export const { updateBoardState, updateAllPiecesAddedToBoard, updateCellOfSelectedPiece, updateBoardStateArchive } = boardStateSlice.actions;
 
 export default boardStateSlice.reducer;

@@ -118,6 +118,10 @@ const selectCurrentView = (state: any) => {
 
 const selectContractAddress = (state: any) => {
     return state.appState.contractAddress;
+};
+
+const selectBoardStateArchive = (state: any) => {
+    return state.boardState.boardStateArchive;
 }
 
 export const StateGetter = {
@@ -139,6 +143,7 @@ export const StateGetter = {
 
 export const Selector = {
     selectBoardState,
+    selectBoardStateArchive,
     selectAllPiecesAddedToBoard,
     selectCellOfSelectedPiece,
     selectContractAddress,
