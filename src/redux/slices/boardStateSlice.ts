@@ -31,12 +31,18 @@ export const boardStateSlice = createSlice({
 
             state.boardStateArchive = tempArchive;
         },
-        refreshBoardStateArchive: (state, action) => {
+        refreshBoardState: (state) => {
+            state.boardState = '00000_00000_00000_00000_00000';
+            state.allPiecesAddedToBoard = false;
+            state.cellOfSelectedPiece = {
+                X: 0, Y: 0,
+            }
             state.boardStateArchive = ['00000_00000_00000_00000_00000'];
+
         }
     }
 });
 
-export const { updateBoardState, updateAllPiecesAddedToBoard, updateCellOfSelectedPiece, updateBoardStateArchive } = boardStateSlice.actions;
+export const { updateBoardState, updateAllPiecesAddedToBoard, updateCellOfSelectedPiece, updateBoardStateArchive, refreshBoardState } = boardStateSlice.actions;
 
 export default boardStateSlice.reducer;

@@ -84,6 +84,37 @@
     transform: scale(1.01);
 }
 
+.button-special {
+    font-size: 14px;
+    background-color: rgb(82, 57, 57);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    margin-top: 20px;
+    margin-right: 20px;
+    cursor: pointer;
+    text-transform: capitalize;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ad9797;
+    box-shadow: #303030;
+}
+
+.button-special:hover {
+    transform: scale(1.01);
+    background-color: white;
+    color: #303030;
+}
+
+.button-special:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.button-special:disabled:hover {
+    background-color: rgb(82, 57, 57);
+    color: #ad9797;
+}
+
 .text-area-input {
     width: 480px;
     height: 100px;
@@ -121,3 +152,4 @@
     color: #303030;
     font-size: 14px;
 }
+

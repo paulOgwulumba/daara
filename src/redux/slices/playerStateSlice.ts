@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialPieces = 3;
+const initialPieces = 5;
 
 export const playerStateSlice = createSlice({
     name: 'playerState',
@@ -24,6 +24,12 @@ export const playerStateSlice = createSlice({
         updatePlayerTwoPiecesLeft: (state, action) => {
             state.playerTwoPiecesLeft = action.payload;
         },
+        refreshPlayerState: (state) => {
+            state.playerOnePiecesInHand = initialPieces;
+            state.playerTwoPiecesInHand = initialPieces;
+            state.playerOnePiecesLeft = initialPieces;
+            state.playerTwoPiecesLeft = initialPieces;
+        }
     }
 });
 
@@ -32,6 +38,7 @@ export const {
     updatePlayerTwoPiecesInHand,
     updatePlayerOnePiecesLeft,
     updatePlayerTwoPiecesLeft,
+    refreshPlayerState,
 } = playerStateSlice.actions;
 
 export default playerStateSlice.reducer;

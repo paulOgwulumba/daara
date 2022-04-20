@@ -13,6 +13,7 @@ import {
     ConnectAccountWithMnemonicView,
     WinnerView,
     LoserView,
+    ReviewGameView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -353,6 +354,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
           <ConditionalRender isVisible = { currentView === Views.LOSER_VIEW }>
               <LoserView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.REVIEW_GAME_VIEW }>
+              <ReviewGameView />
           </ConditionalRender>
       </div>
     )
