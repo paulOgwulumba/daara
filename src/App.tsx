@@ -11,6 +11,8 @@ import {
     GamePlayView, 
     WaitingForAttacherView,
     ConnectAccountWithMnemonicView,
+    WinnerView,
+    LoserView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -124,9 +126,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         updateOpponentMove: (boardState: any, gamePlayState: any) => {
             setIsGameLoading(true);
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            console.log(boardState);
-            console.log(gamePlayState);
-            console.log("Updating opponent move");
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
             
             dispatch(updateAllPiecesAddedToBoard(decodedGamePlayState.allPiecesAddedToBoard));
@@ -153,14 +152,14 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         announceWinner: () => {
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
+            setIsGameLoading(false);
+            setIsLoading(false);
             
             if (piecesLeft >= 3) {
-                alert("You win!!!");
-                console.log("You win!!");
+                dispatch(updateCurrentView(Views.WINNER_VIEW));
             }
             else {
-                alert("You lose");
-                console.log("You lose");
+                dispatch(updateCurrentView(Views.LOSER_VIEW));
             }
         }
     };
@@ -194,34 +193,24 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         setIsLoading(true);
 
         try {
-            console.log("Creating contract");
             contract = playerWalletAccount.contract(reachBackend);
-            console.log("Contract created successfully")
         } 
         catch (err) {
-            alert(err);
-            console.log(err);
             setIsLoading(false);
             return;
         } 
 
         try {  
-            console.log("Making first publish");
             reachBackend?.Alice(contract, interact);
 
-            console.log('Getting contract information');
             const contractAddress = JSON.stringify(await contract.getInfo(), null, 2);
             setIsLoading(false);
 
-            console.log(contractAddress);
             dispatch(updateContractAddress(contractAddress));
-            console.log("waiting for attacher to join");
             dispatch(updateCurrentView(Views.WAITING_FOR_ATTACHER_VIEW));
             dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         }
         catch (err) {
-            alert(err);
-            console.log(err);
             setIsLoading(false);
             return;
         }
@@ -349,6 +338,14 @@ const App = ({ reach, reachBackend }: IAppProps) => {
                     isError = { displayMnemonicError }
                     mnemonic = { mnemonic }
                 />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.WINNER_VIEW }>
+              <WinnerView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.LOSER_VIEW }>
+              <LoserView />
           </ConditionalRender>
       </div>
     )
