@@ -6,7 +6,6 @@ export const appStateSlice = createSlice({
     initialState: {
         playerWalletAccount: {},
         currentView: Views.CONNECT_ACCOUNT_VIEW,
-        // currentView: Views.GAME_PLAY_VIEW,
         contractAddress: '',
     },
     reducers: {

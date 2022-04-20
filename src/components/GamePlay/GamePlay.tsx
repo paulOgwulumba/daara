@@ -83,11 +83,12 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
         if (!allPiecesAddedToBoard) {
             const cellAdditionValidityStatus = isValidCellToAddPieceTo(gamePlayState);
             if (cellAdditionValidityStatus.isValid) {
-                addPieceToSelectedCell(unpackedBoardState, position, playerTurn, dispatch);
+                unpackedBoardState = addPieceToSelectedCell(unpackedBoardState, position, playerTurn, dispatch);
                 checkIfAllPiecesHaveBeenAddedToBoard(playerTurn, playerTwoPiecesInHand, dispatch);
                 reduceNumberOfPiecesHeldByPlayerThatJustPlayed(playerTurn, playerOnePiecesInHand, playerTwoPiecesInHand, dispatch);
                 togglePlayerTurn(playerTurn, dispatch); 
-                resolvePromise();
+
+                resolvePromise(stringifyBoardState(unpackedBoardState));
             } 
             else {
                 alert(cellAdditionValidityStatus.message);
@@ -133,7 +134,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
                     dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
 
-                    resolvePromise();
+                    resolvePromise(stringifyBoardState(unpackedBoardState));
                 } 
                 else {
                     alert(cellMovingValidityStatus.message);
@@ -162,7 +163,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
                         dispatch(updateBoardState(boardStateString));
 
-                        resolvePromise();
+                        resolvePromise(boardStateString);
                     }
                     else {
                         alert(pieceAttackValidityStatus.message);

@@ -13,6 +13,7 @@ import {
     ConnectAccountWithMnemonicView,
     WinnerView,
     LoserView,
+    ReviewGameView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -20,6 +21,7 @@ import { Loader, GameLoader } from './components';
 import { Selector } from './redux/selectors';
 import Store from './redux/store';
 import { 
+    updateBoardStateArchive,
     updateContractAddress,
     updatePlayerWalletAccount, 
     updateCurrentPlayer,
@@ -53,6 +55,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const [contractAddressEntry, setContractAddressEntry] = useState('');
     const [displayContractAddressError, setDisplayContractAddressError] = useState(false);
     const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
+
     const dispatch = useDispatch();
 
     const handleMnemonicChange = (value: string) => {
@@ -82,13 +85,13 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         else {
             console.log("Skipping move execution because player does not have enough pieces left.");
         }
-    }
+    };
 
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
             setIsGameLoading(true);
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            console.log("Getting number of pieces left.")
+            
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
             const playerPieces = 
@@ -123,10 +126,12 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             return [boardState, gamePlayState];
         },
 
-        updateOpponentMove: (boardState: any, gamePlayState: any) => {
+        updateOpponentMove: (newBoardState: any, gamePlayState: any) => {
             setIsGameLoading(true);
             const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
+
+            dispatch(updateBoardStateArchive(newBoardState));
             
             dispatch(updateAllPiecesAddedToBoard(decodedGamePlayState.allPiecesAddedToBoard));
             dispatch(updateCellOfSelectedPiece(decodedGamePlayState.cellOfSelectedPiece));
@@ -138,7 +143,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updatePlayerTurn(decodedGamePlayState.playerTurn));
             dispatch(updatePlayerTwoPiecesInHand(decodedGamePlayState.playerTwoPiecesInHand));
             dispatch(updatePlayerTwoPiecesLeft(decodedGamePlayState.playerTwoPiecesLeft));
-            dispatch(updateBoardState(boardState));
+            dispatch(updateBoardState(newBoardState));
         }, 
 
         informTimeout: () => {
@@ -240,8 +245,11 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         }
     };
 
-    const resolvePromise = () => {
+    const resolvePromise = (boardStateString) => {
         setIsGameLoading(true);
+
+        dispatch(updateBoardStateArchive(boardStateString));
+
         promise.resolve();
     }
 
@@ -346,6 +354,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
           <ConditionalRender isVisible = { currentView === Views.LOSER_VIEW }>
               <LoserView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.REVIEW_GAME_VIEW }>
+              <ReviewGameView />
           </ConditionalRender>
       </div>
     )

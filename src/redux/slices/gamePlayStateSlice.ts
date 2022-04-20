@@ -25,6 +25,13 @@ export const gamePlayStateSlice = createSlice({
         },
         updateNumberOfAttacksLeft: (state, action) => {
             state.numberOfAttacksLeft = action.payload;
+        },
+        refreshGamePlayState: (state) => {
+            state.playerTurn = player.FIRST_PLAYER;
+            state.currentPlayer = player.FIRST_PLAYER;
+            state.isPlayerToPlayAgain = false;
+            state.isPlayerToAttackOpponentPieces = false;
+            state.numberOfAttacksLeft = 0;
         }
     }
 });
@@ -34,7 +41,8 @@ export const {
     updateCurrentPlayer,
     updateIsPlayerToPlayAgain,
     updateIsPlayerToAttackOpponentPieces,
-    updateNumberOfAttacksLeft
+    updateNumberOfAttacksLeft,
+    refreshGamePlayState,
 } = gamePlayStateSlice.actions;
 
 export default gamePlayStateSlice.reducer;
