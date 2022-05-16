@@ -456,7 +456,7 @@ export const main = Reach.App(() => {
 ```
 
 ## Interaction Introduction
-Now that we have a complete contract, we can write the frontend. Since we'll be interacting with an API to play the actual Pokémon game, using a web frontend library is a better choice. In our case it will be React. The code below was wrote using Typescript. For state management, the redux library was used.
+Now that we have a complete contract, we can write the frontend. Since we'll be interacting with an API to play the actual Daara game, using a web frontend library is a better choice. In our case it will be React. The code below was wrote using Typescript. For state management, the redux library was used.
 
 **Stop!**
 Insert `interact` calls to the [frontend](https://docs.reach.sh/ref-model.html#(tech._frontend)) into the program.
