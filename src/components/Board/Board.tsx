@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Board.module.css';
 import BoardCell from './BoardCell';
 import BoardRow from './BoardRow';
@@ -11,7 +10,12 @@ interface BoardProps {
     handleCellClick: Function,
 }
 
-const Board = ({ numberOfRows = 5, numberOfColumns = 5, boardState, handleCellClick }: BoardProps) => {
+const Board = ({ 
+    numberOfRows = 5, 
+    numberOfColumns = 5, 
+    boardState, 
+    handleCellClick 
+}: BoardProps) => {
 
     const renderBoard = (rows: number, columns: number, state: string) => {
         let boardArray = [];

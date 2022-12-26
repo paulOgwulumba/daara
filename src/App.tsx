@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
@@ -49,7 +50,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
     const [promise, setPromise] = useState({resolve: null});
-    const [isLoading, setIsLoading] = useState(false); /////////
+    const [isLoading, setIsLoading] = useState(false);
     const [isGameLoading, setIsGameLoading] = useState(false);;
     const [mnemonic, setMnemonic] = useState('');
     const [contractAddressEntry, setContractAddressEntry] = useState('');
@@ -90,8 +91,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
             setIsGameLoading(true);
-            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            
+
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
             const playerPieces = 
@@ -110,7 +113,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         },
 
         dealPiece: async () => {
-            let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const playerTurn = Store.getState().gamePlayState.playerTurn;
             
@@ -128,7 +133,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         updateOpponentMove: (newBoardState: any, gamePlayState: any) => {
             setIsGameLoading(true);
-            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+                
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
 
             dispatch(updateBoardStateArchive(newBoardState));

@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './GamePlay.module.css';
 import { Board } from '../../components';
 import { 
     addPieceToSelectedCell,
     checkIfAllPiecesHaveBeenAddedToBoard,
-    decodeGamePlayState,
     decorateMatchedPieces,
     deselectPreviouslySelectedCell,
-    encodeGamePlayState,
     endAttack,
     endDoublePlay,
     unpackBoardState, 
@@ -23,12 +20,11 @@ import {
     refreshMatchedCells,
     removePieceFromCell,
     selectPieceToBeMoved,
-    //toggleCurrentPlayer,
     togglePlayerTurn,
     isSelectedPieceClickedOnAgain,
 } from '../../utils';
 import { cellPosition, gamePlayState } from '../../utils/interfaces';
-import { player, cellState } from '../../utils/constants';
+import { player } from '../../utils/constants';
 import { Selector } from '../../redux/selectors';
 import { 
     updateBoardState,
@@ -41,8 +37,6 @@ import { PiecesLeft } from './PiecesLeft';
 import { PiecesCaptured } from './PiecesCaptured';
 import { PiecesInHand } from './PiecesInHand';
 import { PlayerTurnAnimator } from './PlayerTurnAnimator';
-
-const initialBoardState = `00000_00000_00000_00000_00000`;
 
 interface IGamePlayProps {
     resolvePromise: Function,
