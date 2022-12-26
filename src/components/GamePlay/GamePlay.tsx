@@ -24,6 +24,7 @@ import {
     isSelectedPieceClickedOnAgain,
 } from '../../utils';
 import { cellPosition, gamePlayState } from '../../utils/interfaces';
+import { usePrompt } from '../Prompt/usePrompt';
 import { player } from '../../utils/constants';
 import { Selector } from '../../redux/selectors';
 import { 
@@ -48,6 +49,8 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
     const boardState = useSelector(Selector.selectBoardState);
 
+    const { ask, inform } = usePrompt();
+
     const allPiecesAddedToBoard = useSelector(Selector.selectAllPiecesAddedToBoard);
     const cellOfSelectedPiece = useSelector(Selector.selectCellOfSelectedPiece);
     const currentPlayer = useSelector(Selector.selectCurrentPlayer);
@@ -63,7 +66,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
     const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft);
     
     
-    const handleClick = (position: cellPosition) => {
+    const handleClick = async (position: cellPosition) => {
         let unpackedBoardState = unpackBoardState(boardState);
         const gamePlayState: gamePlayState = {
             playerTurn, 
@@ -85,13 +88,20 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                 resolvePromise(stringifyBoardState(unpackedBoardState));
             } 
             else {
-                alert(cellAdditionValidityStatus.message);
+                await inform({
+                    heading: 'Invalid Move',
+                    information: cellAdditionValidityStatus.message,
+                });
             }
         }
         else {
             // Make sure it is this player's turn to play
             if (currentPlayer !== playerTurn) {
-                alert("It is not your turn to play, please hold on.");
+                await inform({
+                    heading: 'Invalid Move',
+                    information: "It is not your turn to play, please hold on."
+                });
+
                 return;
             };
 
@@ -131,7 +141,10 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                     resolvePromise(stringifyBoardState(unpackedBoardState));
                 } 
                 else {
-                    alert(cellMovingValidityStatus.message);
+                    await inform({
+                        heading: 'Invalid Move',
+                        information: cellMovingValidityStatus.message,
+                    });
                 }
             }
             else if (isPlayerToAttackOpponentPieces) {
@@ -160,7 +173,10 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                         resolvePromise(boardStateString);
                     }
                     else {
-                        alert(pieceAttackValidityStatus.message);
+                        await inform({
+                            heading: 'Invalid Move',
+                            information: pieceAttackValidityStatus.message,
+                        });
                     }
             }
             else {
@@ -175,7 +191,10 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                     dispatch(updateCellOfSelectedPiece(position));
                 }
                 else {
-                    alert(pieceSelectionValidationStatus.message);
+                    await inform({
+                        heading: 'Invalid Move',
+                        information: pieceSelectionValidationStatus.message,
+                    });
                 }
             }
         }

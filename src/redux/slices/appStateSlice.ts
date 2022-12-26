@@ -5,8 +5,7 @@ export const appStateSlice = createSlice({
     name: 'appState',
     initialState: {
         playerWalletAccount: {},
-        // currentView: Views.CONNECT_ACCOUNT_VIEW,
-        currentView: Views.GAME_PLAY_VIEW,
+        currentView: Views.CONNECT_ACCOUNT_VIEW,
         contractAddress: '',
     },
     reducers: {
@@ -22,6 +21,10 @@ export const appStateSlice = createSlice({
     }
 });
 
-export const { updatePlayerWalletAccount, updateCurrentView, updateContractAddress } = appStateSlice.actions;
+export const { 
+    updatePlayerWalletAccount, 
+    updateCurrentView, 
+    updateContractAddress 
+} = appStateSlice.actions;
 
 export default appStateSlice.reducer;

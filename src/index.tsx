@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect }  from '@reach-sh/stdlib';
-
+import { RecoilRoot } from 'recoil';
+import { Prompt } from './components/Prompt';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider as NetworkProvider } from './utils/constants';
@@ -16,12 +17,16 @@ reach.setWalletFallback(reach.walletFallback({ providerEnv: NetworkProvider.TEST
 
 ReactDOM.render(
   <React.StrictMode>
+    <RecoilRoot>
       <Provider store={store}>
           <App 
               reach = { reach } 
               reachBackend = { reachBackend }  
           />
+
+          <Prompt />
       </Provider>
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')
 );

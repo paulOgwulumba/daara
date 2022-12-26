@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { ConditionalRender } from './components';
@@ -21,6 +21,7 @@ import { encodeGamePlayState, decodeGamePlayState } from './utils';
 import { Loader, GameLoader } from './components';
 import { Selector } from './redux/selectors';
 import Store from './redux/store';
+import { usePrompt } from './components/Prompt/usePrompt';
 import { 
     updateBoardStateArchive,
     updateContractAddress,
@@ -56,6 +57,8 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const [contractAddressEntry, setContractAddressEntry] = useState('');
     const [displayContractAddressError, setDisplayContractAddressError] = useState(false);
     const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
+
+    const { ask, inform } = usePrompt();
 
     const dispatch = useDispatch();
 
@@ -154,12 +157,24 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateBoardState(newBoardState));
         }, 
 
-        informTimeout: () => {
-            alert("Time is up!!!");
+        informTimeout: async () => {
+            await inform({
+                heading: 'Time Up!',
+                information: 'Oops! Time is up. The game has ended',
+            });
+
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
         },
 
-        informDisagreement: () => {
-            alert("Values from two players do not match!");
+        informDisagreement: async () => {
+            await inform({
+                heading: 'Disagreement!',
+                information: 'Values from you and your opponent do not match! The game cannot continue.',
+            });
+
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
         }, 
 
         announceWinner: () => {
@@ -177,9 +192,18 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         }
     };
 
-    const acceptWager = (wager: number) => {
+    const acceptWager = async (wager: number) => {
         setIsGameLoading(true);
-        alert(`Do you accept a wager of ${wager}?`);
+
+        const accepted = await ask({
+            heading: 'Wager',
+            question: `Do you accept a wager of ${wager}?`,
+        });
+        
+        if (!accepted) {
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
+        }
     }
 
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
@@ -191,7 +215,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const balance = convertCurrencyFromBigNumberToSmallNumber(balanceBigNum);
 
         if ((balance) < (wager + 1)) {
-            alert(`Insufficient funds in wallet to set the wager of ${wager}.`);
+            await inform ({
+                heading: 'Error',
+                information: `Insufficient funds in wallet to set the wager of ${wager}.`
+            })
             return;
         }
 
@@ -294,7 +321,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         catch (e) {
             setDisplayMnemonicError(true);
         }
-    }
+    };
 
     useEffect(() => {
         connectToDefaultAccount();
