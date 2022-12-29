@@ -203,6 +203,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         if (!accepted) {
             dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
             dispatch(updateContractAddress(''));
+            setIsGameLoading(false);
+
+            return await new Promise(() => null);
         }
     }
 
@@ -324,7 +327,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     useEffect(() => {
-        connectToDefaultAccount();
+        // connectToDefaultAccount();
     }, []);
 
     return (

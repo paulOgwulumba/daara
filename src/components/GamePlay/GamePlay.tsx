@@ -38,6 +38,7 @@ import { PiecesLeft } from './PiecesLeft';
 import { PiecesCaptured } from './PiecesCaptured';
 import { PiecesInHand } from './PiecesInHand';
 import { PlayerTurnAnimator } from './PlayerTurnAnimator';
+import { ActionButtons } from './ActionButtons';
 
 interface IGamePlayProps {
     resolvePromise: Function,
@@ -198,7 +199,21 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                 }
             }
         }
-    }
+    };
+
+    const handleDraw = async () => {
+        await ask({
+            heading: 'Draw',
+            question: 'Are you sure you want to request for a draw?'
+        });
+    };
+
+    const handleResign = async () => {
+        await ask({
+            heading: 'Resign',
+            question: 'Are you sure you want to resign? You will lose your wager.',
+        });
+    };
 
     return (
       <>
@@ -259,6 +274,11 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
         </div>
 
         <PiecesInHand />
+
+        <ActionButtons 
+            onDraw={handleDraw}
+            onResign={handleResign}
+        />
       </>
     );
 };
