@@ -33,6 +33,8 @@ import {
     updateNumberOfAttacksLeft,
     updateIsPlayerToAttackOpponentPieces,
     updateIsPlayerToPlayAgain,
+    updatePlayerTwoPiecesLeft,
+    updatePlayerOnePiecesLeft,
  } from '../../redux/slices';
 import { PiecesLeft } from './PiecesLeft';
 import { PiecesCaptured } from './PiecesCaptured';
@@ -209,10 +211,21 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
     };
 
     const handleResign = async () => {
-        await ask({
+        const response = await ask({
             heading: 'Resign',
             question: 'Are you sure you want to resign? You will lose your wager.',
         });
+
+        if (!response) return;
+
+        if (currentPlayer === player.FIRST_PLAYER) {
+            dispatch(updatePlayerOnePiecesLeft(2));
+        }
+        else {
+            dispatch(updatePlayerTwoPiecesLeft(2));
+        }
+
+        resolvePromise();
     };
 
     return (
