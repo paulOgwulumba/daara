@@ -82,13 +82,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const awaitPlayerMoveOrSkipIfGameHasEnded = async () => {
         const currentPlayer = Store.getState().gamePlayState.currentPlayer;      
         const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
-        console.log('pieces left', piecesLeft); 
         if (piecesLeft >= 3) {
             setIsGameLoading(false);
             await awaitPlayerMove();
-        }
-        else {
-            console.log("Skipping move execution because player does not have enough pieces left.");
         }
     };
 
@@ -308,8 +304,6 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     const resolvePromise = (boardStateString = '') => {
-        setIsGameLoading(true);
-
         if (boardStateString.length > 0) {
             dispatch(updateBoardStateArchive(boardStateString));
         }
@@ -317,6 +311,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         setPromise((value) => {
             if (value.resolve) {
                 value.resolve();
+                setIsGameLoading(true);
             }
             return { resolve: null }
         })

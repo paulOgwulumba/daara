@@ -239,7 +239,6 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
     };
 
     const analyzeDrawState = async () => {
-        console.log(drawState)
         if (drawState === DRAW_STATE.ASK_FOR_DRAW) {
             acceptOrRejectDraw();
         }
