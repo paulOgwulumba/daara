@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { ConditionalRender } from './components';
@@ -14,12 +15,14 @@ import {
     WinnerView,
     LoserView,
     ReviewGameView,
+    DrawView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
 import { Loader, GameLoader } from './components';
 import { Selector } from './redux/selectors';
 import Store from './redux/store';
+import { usePrompt } from './components/Prompt/usePrompt';
 import { 
     updateBoardStateArchive,
     updateContractAddress,
@@ -37,8 +40,8 @@ import {
     updatePlayerTurn,
     updatePlayerTwoPiecesInHand,
     updatePlayerTwoPiecesLeft,
+    updateDrawState,
 } from './redux/slices';
-
 
 export interface IAppProps {
     reach: any,
@@ -49,12 +52,14 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const playerWalletAccount = useSelector(Selector.selectPlayerWalletAccount);
     const currentView = useSelector(Selector.selectCurrentView);
     const [promise, setPromise] = useState({resolve: null});
-    const [isLoading, setIsLoading] = useState(false); /////////
+    const [isLoading, setIsLoading] = useState(false);
     const [isGameLoading, setIsGameLoading] = useState(false);;
     const [mnemonic, setMnemonic] = useState('');
     const [contractAddressEntry, setContractAddressEntry] = useState('');
     const [displayContractAddressError, setDisplayContractAddressError] = useState(false);
     const [displayMnemonicError, setDisplayMnemonicError] = useState(false);
+
+    const { ask, inform } = usePrompt();
 
     const dispatch = useDispatch();
 
@@ -77,21 +82,19 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const awaitPlayerMoveOrSkipIfGameHasEnded = async () => {
         const currentPlayer = Store.getState().gamePlayState.currentPlayer;      
         const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
-            
         if (piecesLeft >= 3) {
             setIsGameLoading(false);
             await awaitPlayerMove();
-        }
-        else {
-            console.log("Skipping move execution because player does not have enough pieces left.");
         }
     };
 
     const InteractInterface = {
         getNumberOfPiecesLeft: () => {
             setIsGameLoading(true);
-            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
-            
+
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
 
             const playerPieces = 
@@ -110,7 +113,9 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         },
 
         dealPiece: async () => {
-            let nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
             const currentPlayer = Store.getState().gamePlayState.currentPlayer;
             const playerTurn = Store.getState().gamePlayState.playerTurn;
             
@@ -128,7 +133,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
         updateOpponentMove: (newBoardState: any, gamePlayState: any) => {
             setIsGameLoading(true);
-            const nothing = currentView === Views.GAME_PLAY_VIEW? '' : dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+
+            if (currentView !== Views.GAME_PLAY_VIEW)
+                dispatch(updateCurrentView(Views.GAME_PLAY_VIEW));
+                
             const decodedGamePlayState = decodeGamePlayState(gamePlayState);
 
             dispatch(updateBoardStateArchive(newBoardState));
@@ -143,15 +151,28 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updatePlayerTurn(decodedGamePlayState.playerTurn));
             dispatch(updatePlayerTwoPiecesInHand(decodedGamePlayState.playerTwoPiecesInHand));
             dispatch(updatePlayerTwoPiecesLeft(decodedGamePlayState.playerTwoPiecesLeft));
+            dispatch(updateDrawState(decodedGamePlayState.drawState));
             dispatch(updateBoardState(newBoardState));
         }, 
 
-        informTimeout: () => {
-            alert("Time is up!!!");
+        informTimeout: async () => {
+            await inform({
+                heading: 'Time Up!',
+                information: 'Oops! Time is up. The game has ended',
+            });
+
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
         },
 
-        informDisagreement: () => {
-            alert("Values from two players do not match!");
+        informDisagreement: async () => {
+            await inform({
+                heading: 'Disagreement!',
+                information: 'Values from you and your opponent do not match! The game cannot continue.',
+            });
+
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
         }, 
 
         announceWinner: () => {
@@ -166,12 +187,30 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             else {
                 dispatch(updateCurrentView(Views.LOSER_VIEW));
             }
+        },
+
+        informDraw: () => {
+            setIsGameLoading(false);
+            setIsLoading(false);
+            dispatch(updateCurrentView(Views.DRAW_VIEW));
         }
     };
 
-    const acceptWager = (wager: number) => {
+    const acceptWager = async (wager: number) => {
         setIsGameLoading(true);
-        alert(`Do you accept a wager of ${wager}?`);
+
+        const accepted = await ask({
+            heading: 'Wager',
+            question: `Do you accept a wager of ${wager}?`,
+        });
+        
+        if (!accepted) {
+            dispatch(updateCurrentView(Views.DEPLOYER_OR_ATTACHER_VIEW));
+            dispatch(updateContractAddress(''));
+            setIsGameLoading(false);
+
+            return await new Promise(() => null);
+        }
     }
 
     const convertCurrencyFromBigNumberToSmallNumber = (amount: number) => {
@@ -183,7 +222,18 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         const balance = convertCurrencyFromBigNumberToSmallNumber(balanceBigNum);
 
         if ((balance) < (wager + 1)) {
-            alert(`Insufficient funds in wallet to set the wager of ${wager}.`);
+            await inform ({
+                heading: 'Error',
+                information: `Insufficient funds in wallet to set the wager of ${wager}.`
+            })
+            return;
+        }
+
+        if ((balance) < 15) {
+            await inform ({
+                heading: 'Error',
+                information: `Insufficient funds in wallet to create contract. You need at least 15 Algos but you have ${balance} Algos.`
+            })
             return;
         }
 
@@ -201,6 +251,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             contract = playerWalletAccount.contract(reachBackend);
         } 
         catch (err) {
+            await inform({
+                heading: 'Error!!',
+                information: err?.toString(),
+            })
             setIsLoading(false);
             return;
         } 
@@ -216,6 +270,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         }
         catch (err) {
+            await inform ({
+                heading: 'Error',
+                information: err?.toString(),
+            })
             setIsLoading(false);
             return;
         }
@@ -245,12 +303,18 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         }
     };
 
-    const resolvePromise = (boardStateString) => {
-        setIsGameLoading(true);
+    const resolvePromise = (boardStateString = '') => {
+        if (boardStateString.length > 0) {
+            dispatch(updateBoardStateArchive(boardStateString));
+        }
 
-        dispatch(updateBoardStateArchive(boardStateString));
-
-        promise.resolve();
+        setPromise((value) => {
+            if (value.resolve) {
+                value.resolve();
+                setIsGameLoading(true);
+            }
+            return { resolve: null }
+        })
     }
 
     const handlePlayerRoleSelect = (role: participantTitle) => {
@@ -286,7 +350,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         catch (e) {
             setDisplayMnemonicError(true);
         }
-    }
+    };
 
     useEffect(() => {
         connectToDefaultAccount();
@@ -294,9 +358,29 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     return (
       <div className = 'App'>
-          <Loader isVisible = { isLoading }/>
+          <Loader 
+            isVisible = { 
+                isLoading && 
+                (
+                    currentView !== Views.LOSER_VIEW ||
+                    currentView !== Views.WINNER_VIEW ||
+                    currentView !== Views.REVIEW_GAME_VIEW ||
+                    currentView !== Views.DRAW_VIEW
+                ) 
+            }
+          />
 
-          <GameLoader isVisible = { isGameLoading } />
+          <GameLoader 
+            isVisible = { 
+              isGameLoading && 
+              (
+                currentView !== Views.LOSER_VIEW ||
+                currentView !== Views.WINNER_VIEW ||
+                currentView !== Views.REVIEW_GAME_VIEW ||
+                currentView !== Views.DRAW_VIEW
+              ) 
+            } 
+          />
 
           <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_VIEW }>
               <ConnectAccountView />
@@ -358,6 +442,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
           <ConditionalRender isVisible = { currentView === Views.REVIEW_GAME_VIEW }>
               <ReviewGameView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.DRAW_VIEW }>
+              <DrawView />
           </ConditionalRender>
       </div>
     )

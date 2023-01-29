@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { player } from '../../utils/constants'; 
+import { DRAW_STATE, player } from '../../utils/constants'; 
 
 export const gamePlayStateSlice = createSlice({
     name: 'gamePlayState',
@@ -9,6 +9,7 @@ export const gamePlayStateSlice = createSlice({
         isPlayerToPlayAgain: false,
         isPlayerToAttackOpponentPieces: false,
         numberOfAttacksLeft: 0,
+        drawState: DRAW_STATE.NO_DRAW,
     },
     reducers: {
         updatePlayerTurn: (state, action) => {
@@ -26,12 +27,16 @@ export const gamePlayStateSlice = createSlice({
         updateNumberOfAttacksLeft: (state, action) => {
             state.numberOfAttacksLeft = action.payload;
         },
+        updateDrawState: (state, action) => {
+          state.drawState = action.payload;
+        },
         refreshGamePlayState: (state) => {
             state.playerTurn = player.FIRST_PLAYER;
             state.currentPlayer = player.FIRST_PLAYER;
             state.isPlayerToPlayAgain = false;
             state.isPlayerToAttackOpponentPieces = false;
             state.numberOfAttacksLeft = 0;
+            state.drawState = DRAW_STATE.NO_DRAW
         }
     }
 });
@@ -42,6 +47,7 @@ export const {
     updateIsPlayerToPlayAgain,
     updateIsPlayerToAttackOpponentPieces,
     updateNumberOfAttacksLeft,
+    updateDrawState,
     refreshGamePlayState,
 } = gamePlayStateSlice.actions;
 

@@ -124,6 +124,14 @@ const selectBoardStateArchive = (state: any) => {
     return state.boardState.boardStateArchive;
 }
 
+const selectDrawState = (state: any) => {
+  return state.gamePlayState.drawState;
+}
+
+const getDrawState = () => {
+  return Store.getState().gamePlayState.drawState;
+}
+
 export const StateGetter = {
     getBoardState,
     getAllPiecesAddedToBoard,
@@ -139,6 +147,7 @@ export const StateGetter = {
     getPlayerTwoPiecesLeft,
     getPlayerWalletAccount,
     getCurrentView,
+    getDrawState,
 };
 
 export const Selector = {
@@ -159,4 +168,5 @@ export const Selector = {
     selectPlayerWalletAccount,
     selectCurrentView,
     selectStartingNumberOfPieces,
+    selectDrawState,
 }

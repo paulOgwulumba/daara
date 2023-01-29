@@ -1,4 +1,3 @@
-import React from "react";
 import { player } from "./constants";
 import { updatePlayerOnePiecesLeft, updatePlayerTwoPiecesLeft } from "../redux/slices";
 

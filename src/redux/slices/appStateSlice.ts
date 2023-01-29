@@ -21,6 +21,10 @@ export const appStateSlice = createSlice({
     }
 });
 
-export const { updatePlayerWalletAccount, updateCurrentView, updateContractAddress } = appStateSlice.actions;
+export const { 
+    updatePlayerWalletAccount, 
+    updateCurrentView, 
+    updateContractAddress 
+} = appStateSlice.actions;
 
 export default appStateSlice.reducer;

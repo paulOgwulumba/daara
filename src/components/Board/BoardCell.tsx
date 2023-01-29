@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import styles from './Board.module.css';
 import { cellState as cellStateEnum } from '../../utils/constants';
 
@@ -49,20 +48,30 @@ const getBoardPieceClassName = (state: cellStateEnum) => {
     }
 
     return styles.boardPieceHide;
-}
+};
 
 const getBoardCellClassName = (state: cellStateEnum) => {
-    if (state === cellStateEnum.CELL_MATCHED_PLAYER_1 || state === cellStateEnum.CELL_MATCHED_PLAYER_2) {
+    if (
+        state === cellStateEnum.CELL_MATCHED_PLAYER_1 || 
+        state === cellStateEnum.CELL_MATCHED_PLAYER_2
+    ) {
         return styles.boardCellHit;
     }
-    if (state === cellStateEnum.CELL_SELECTED_PLAYER_1 || state === cellStateEnum.CELL_SELECTED_PLAYER_2) {
+
+    if (
+        state === cellStateEnum.CELL_SELECTED_PLAYER_1 || 
+        state === cellStateEnum.CELL_SELECTED_PLAYER_2
+    ) {
         return styles.boardCellSelected;
     }
-    if (state === cellStateEnum.CELL_MATCHED_BEFORE_PLAYER_1 || state === cellStateEnum.CELL_MATCHED_BEFORE_PLAYER_2) {
+
+    if (
+        state === cellStateEnum.CELL_MATCHED_BEFORE_PLAYER_1 || 
+        state === cellStateEnum.CELL_MATCHED_BEFORE_PLAYER_2
+    ) {
         return styles.boardCellHitBefore;
     }
     return ''
-}
-
+};
 
 export default BoardCell;

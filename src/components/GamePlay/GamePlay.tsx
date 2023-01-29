@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './GamePlay.module.css';
 import { Board } from '../../components';
 import { 
     addPieceToSelectedCell,
     checkIfAllPiecesHaveBeenAddedToBoard,
-    decodeGamePlayState,
     decorateMatchedPieces,
     deselectPreviouslySelectedCell,
-    encodeGamePlayState,
     endAttack,
     endDoublePlay,
     unpackBoardState, 
@@ -23,12 +21,12 @@ import {
     refreshMatchedCells,
     removePieceFromCell,
     selectPieceToBeMoved,
-    //toggleCurrentPlayer,
     togglePlayerTurn,
     isSelectedPieceClickedOnAgain,
 } from '../../utils';
 import { cellPosition, gamePlayState } from '../../utils/interfaces';
-import { player, cellState } from '../../utils/constants';
+import { usePrompt } from '../Prompt/usePrompt';
+import { DRAW_STATE, player } from '../../utils/constants';
 import { Selector } from '../../redux/selectors';
 import { 
     updateBoardState,
@@ -36,13 +34,16 @@ import {
     updateNumberOfAttacksLeft,
     updateIsPlayerToAttackOpponentPieces,
     updateIsPlayerToPlayAgain,
+    updatePlayerTwoPiecesLeft,
+    updatePlayerOnePiecesLeft,
+    updateDrawState,
  } from '../../redux/slices';
 import { PiecesLeft } from './PiecesLeft';
 import { PiecesCaptured } from './PiecesCaptured';
 import { PiecesInHand } from './PiecesInHand';
 import { PlayerTurnAnimator } from './PlayerTurnAnimator';
-
-const initialBoardState = `00000_00000_00000_00000_00000`;
+import { ActionButtons } from './ActionButtons';
+import { useEffect } from 'react';
 
 interface IGamePlayProps {
     resolvePromise: Function,
@@ -54,22 +55,24 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
     const boardState = useSelector(Selector.selectBoardState);
 
+    const { ask, inform } = usePrompt();
+
     const allPiecesAddedToBoard = useSelector(Selector.selectAllPiecesAddedToBoard);
     const cellOfSelectedPiece = useSelector(Selector.selectCellOfSelectedPiece);
     const currentPlayer = useSelector(Selector.selectCurrentPlayer);
 
     const playerTurn = useSelector(Selector.selectPlayerTurn);
     
-    const playerOnePiecesInHand = useSelector(Selector.selectPlayerOnePiecesInHand);
-    const playerTwoPiecesInHand = useSelector(Selector.selectPlayerTwoPiecesInHand);
-    const playerOnePiecesLeft = useSelector(Selector.selectPlayerOnePiecesLeft);
-    const playerTwoPiecesLeft = useSelector(Selector.selectPlayerTwoPiecesLeft);
-    const isPlayerToPlayAgain = useSelector(Selector.selectIsPlayerToPlayAgain);
-    const isPlayerToAttackOpponentPieces = useSelector(Selector.selectIsPlayerToAttackOpponentPieces);
-    const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft);
+    const playerOnePiecesInHand = useSelector(Selector.selectPlayerOnePiecesInHand) as number;
+    const playerTwoPiecesInHand = useSelector(Selector.selectPlayerTwoPiecesInHand) as number;
+    const playerOnePiecesLeft = useSelector(Selector.selectPlayerOnePiecesLeft) as number;
+    const playerTwoPiecesLeft = useSelector(Selector.selectPlayerTwoPiecesLeft) as number;
+    const isPlayerToPlayAgain = useSelector(Selector.selectIsPlayerToPlayAgain) as boolean;
+    const isPlayerToAttackOpponentPieces = useSelector(Selector.selectIsPlayerToAttackOpponentPieces) as boolean;
+    const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft) as number;
+    const drawState = useSelector(Selector.selectDrawState) as DRAW_STATE;
     
-    
-    const handleClick = (position: cellPosition) => {
+    const handleClick = async (position: cellPosition) => {
         let unpackedBoardState = unpackBoardState(boardState);
         const gamePlayState: gamePlayState = {
             playerTurn, 
@@ -91,13 +94,20 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                 resolvePromise(stringifyBoardState(unpackedBoardState));
             } 
             else {
-                alert(cellAdditionValidityStatus.message);
+                await inform({
+                    heading: 'Invalid Move',
+                    information: cellAdditionValidityStatus.message,
+                });
             }
         }
         else {
             // Make sure it is this player's turn to play
             if (currentPlayer !== playerTurn) {
-                alert("It is not your turn to play, please hold on.");
+                await inform({
+                    heading: 'Invalid Move',
+                    information: "It is not your turn to play, please hold on."
+                });
+
                 return;
             };
 
@@ -137,7 +147,10 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                     resolvePromise(stringifyBoardState(unpackedBoardState));
                 } 
                 else {
-                    alert(cellMovingValidityStatus.message);
+                    await inform({
+                        heading: 'Invalid Move',
+                        information: cellMovingValidityStatus.message,
+                    });
                 }
             }
             else if (isPlayerToAttackOpponentPieces) {
@@ -166,7 +179,10 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                         resolvePromise(boardStateString);
                     }
                     else {
-                        alert(pieceAttackValidityStatus.message);
+                        await inform({
+                            heading: 'Invalid Move',
+                            information: pieceAttackValidityStatus.message,
+                        });
                     }
             }
             else {
@@ -181,11 +197,94 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
                     dispatch(updateCellOfSelectedPiece(position));
                 }
                 else {
-                    alert(pieceSelectionValidationStatus.message);
+                    await inform({
+                        heading: 'Invalid Move',
+                        information: pieceSelectionValidationStatus.message,
+                    });
                 }
             }
         }
-    }
+    };
+
+    const handleDraw = async () => {
+        const response = await ask({
+            heading: 'Draw',
+            question: 'Are you sure you want to request for a draw?'
+        });
+
+        if (!response) return;
+
+        dispatch(updateDrawState(DRAW_STATE.ASK_FOR_DRAW));
+        togglePlayerTurn(playerTurn, dispatch);
+        resolvePromise();
+    };
+
+    const handleResign = async () => {
+        const response = await ask({
+            heading: 'Resign',
+            question: 'Are you sure you want to resign? You will lose your wager.',
+        });
+
+        if (!response) return;
+
+        if (currentPlayer === player.FIRST_PLAYER) {
+            dispatch(updatePlayerOnePiecesLeft(2));
+        }
+        else {
+            dispatch(updatePlayerTwoPiecesLeft(2));
+        }
+
+        togglePlayerTurn(playerTurn, dispatch);
+        resolvePromise();
+    };
+
+    const analyzeDrawState = async () => {
+        if (drawState === DRAW_STATE.ASK_FOR_DRAW) {
+            acceptOrRejectDraw();
+        }
+
+        if (drawState === DRAW_STATE.REJECTED_DRAW) {
+            await inform({
+                heading: 'Oops',
+                information: 'Your request for a draw was rejected. Please, play your next move',
+            });
+
+            dispatch(updateDrawState(DRAW_STATE.NO_DRAW));
+        }
+
+        if (drawState === DRAW_STATE.ACCEPTED_DRAW) {
+            dispatch(updatePlayerOnePiecesLeft(2));
+            dispatch(updatePlayerTwoPiecesLeft(2));
+            togglePlayerTurn(playerTurn, dispatch);
+            resolvePromise();
+        }
+    };
+
+    const acceptOrRejectDraw = async () => {
+        const response = await ask({
+            heading: 'Draw',
+            question: 'Your opponent is requesting for a draw. Do you accept?'
+        });
+
+        if (response) {
+            dispatch(updateDrawState(DRAW_STATE.ACCEPTED_DRAW));
+            dispatch(updatePlayerOnePiecesLeft(2));
+            dispatch(updatePlayerTwoPiecesLeft(2));
+            togglePlayerTurn(playerTurn, dispatch);
+            resolvePromise();
+        }
+        else {
+            dispatch(updateDrawState(DRAW_STATE.REJECTED_DRAW));
+            togglePlayerTurn(playerTurn, dispatch);
+            resolvePromise();
+        }
+    };
+
+    useEffect(() => {
+        if (!isGameLoading) {
+            analyzeDrawState();
+        }
+    }, [isGameLoading])
 
     return (
       <>
@@ -246,6 +345,11 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
         </div>
 
         <PiecesInHand />
+
+        <ActionButtons 
+            onDraw={handleDraw}
+            onResign={handleResign}
+        />
       </>
     );
 };

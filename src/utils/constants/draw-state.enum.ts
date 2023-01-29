@@ -1,0 +1,6 @@
+export enum DRAW_STATE {
+  NO_DRAW = 0,
+  ASK_FOR_DRAW = 1,
+  ACCEPTED_DRAW = 2,
+  REJECTED_DRAW = 3,
+}
