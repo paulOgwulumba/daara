@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './GamePlay.module.css';
 import { Board } from '../../components';
@@ -25,7 +26,7 @@ import {
 } from '../../utils';
 import { cellPosition, gamePlayState } from '../../utils/interfaces';
 import { usePrompt } from '../Prompt/usePrompt';
-import { player } from '../../utils/constants';
+import { DRAW_STATE, player } from '../../utils/constants';
 import { Selector } from '../../redux/selectors';
 import { 
     updateBoardState,
@@ -35,12 +36,14 @@ import {
     updateIsPlayerToPlayAgain,
     updatePlayerTwoPiecesLeft,
     updatePlayerOnePiecesLeft,
+    updateDrawState,
  } from '../../redux/slices';
 import { PiecesLeft } from './PiecesLeft';
 import { PiecesCaptured } from './PiecesCaptured';
 import { PiecesInHand } from './PiecesInHand';
 import { PlayerTurnAnimator } from './PlayerTurnAnimator';
 import { ActionButtons } from './ActionButtons';
+import { useEffect } from 'react';
 
 interface IGamePlayProps {
     resolvePromise: Function,
@@ -60,14 +63,14 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
     const playerTurn = useSelector(Selector.selectPlayerTurn);
     
-    const playerOnePiecesInHand = useSelector(Selector.selectPlayerOnePiecesInHand);
-    const playerTwoPiecesInHand = useSelector(Selector.selectPlayerTwoPiecesInHand);
-    const playerOnePiecesLeft = useSelector(Selector.selectPlayerOnePiecesLeft);
-    const playerTwoPiecesLeft = useSelector(Selector.selectPlayerTwoPiecesLeft);
-    const isPlayerToPlayAgain = useSelector(Selector.selectIsPlayerToPlayAgain);
-    const isPlayerToAttackOpponentPieces = useSelector(Selector.selectIsPlayerToAttackOpponentPieces);
-    const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft);
-    
+    const playerOnePiecesInHand = useSelector(Selector.selectPlayerOnePiecesInHand) as number;
+    const playerTwoPiecesInHand = useSelector(Selector.selectPlayerTwoPiecesInHand) as number;
+    const playerOnePiecesLeft = useSelector(Selector.selectPlayerOnePiecesLeft) as number;
+    const playerTwoPiecesLeft = useSelector(Selector.selectPlayerTwoPiecesLeft) as number;
+    const isPlayerToPlayAgain = useSelector(Selector.selectIsPlayerToPlayAgain) as boolean;
+    const isPlayerToAttackOpponentPieces = useSelector(Selector.selectIsPlayerToAttackOpponentPieces) as boolean;
+    const numberOfAttacksLeft = useSelector(Selector.selectNumberOfAttacksLeft) as number;
+    const drawState = useSelector(Selector.selectDrawState) as DRAW_STATE;
     
     const handleClick = async (position: cellPosition) => {
         let unpackedBoardState = unpackBoardState(boardState);
@@ -204,10 +207,15 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
     };
 
     const handleDraw = async () => {
-        await ask({
+        const response = await ask({
             heading: 'Draw',
             question: 'Are you sure you want to request for a draw?'
         });
+
+        if (!response) return;
+
+        dispatch(updateDrawState(DRAW_STATE.REJECTED_DRAW));
+        resolvePromise();
     };
 
     const handleResign = async () => {
@@ -227,6 +235,51 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
         resolvePromise();
     };
+
+    const analyzeDrawState = async () => {
+        if (drawState === DRAW_STATE.ASK_FOR_DRAW) {
+            acceptOrRejectDraw();
+        }
+
+        if (drawState === DRAW_STATE.REJECTED_DRAW) {
+            await inform({
+                heading: 'Oops',
+                information: 'Your request for a draw was rejected. Please, play your next move',
+            });
+
+            dispatch(updateDrawState(DRAW_STATE.NO_DRAW));
+        }
+
+        if (drawState === DRAW_STATE.ACCEPTED_DRAW) {
+            dispatch(updatePlayerOnePiecesLeft(2));
+            dispatch(updatePlayerTwoPiecesLeft(2));
+            resolvePromise();
+        }
+    };
+
+    const acceptOrRejectDraw = async () => {
+        const response = await ask({
+            heading: 'Draw',
+            question: 'Your opponent is requesting for a draw. Do you accept?'
+        });
+
+        if (response) {
+            dispatch(updateDrawState(DRAW_STATE.ACCEPTED_DRAW));
+            dispatch(updatePlayerOnePiecesLeft(2));
+            dispatch(updatePlayerTwoPiecesLeft(2));
+            resolvePromise();
+        }
+        else {
+            dispatch(updateDrawState(DRAW_STATE.REJECTED_DRAW));
+            resolvePromise();
+        }
+    };
+
+    useEffect(() => {
+        if (!isGameLoading) {
+            analyzeDrawState();
+        }
+    }, [isGameLoading])
 
     return (
       <>

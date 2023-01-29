@@ -15,6 +15,7 @@ import {
     WinnerView,
     LoserView,
     ReviewGameView,
+    DrawView,
 } from './views';
 import { Views, participantTitle, player } from './utils/constants';
 import { encodeGamePlayState, decodeGamePlayState } from './utils';
@@ -40,7 +41,6 @@ import {
     updatePlayerTwoPiecesInHand,
     updatePlayerTwoPiecesLeft,
 } from './redux/slices';
-
 
 export interface IAppProps {
     reach: any,
@@ -239,6 +239,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             contract = playerWalletAccount.contract(reachBackend);
         } 
         catch (err) {
+            await inform({
+                heading: 'Error!!',
+                information: err?.toString(),
+            })
             setIsLoading(false);
             return;
         } 
@@ -260,6 +264,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     };
 
     const handleJoinGame = async (contractAddress: string) => {
+        console.log('Joining game');
         setIsLoading(true);
         
         try {
@@ -396,6 +401,10 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
           <ConditionalRender isVisible = { currentView === Views.REVIEW_GAME_VIEW }>
               <ReviewGameView />
+          </ConditionalRender>
+
+          <ConditionalRender isVisible = { currentView === Views.DRAW_VIEW }>
+              <DrawView />
           </ConditionalRender>
       </div>
     )

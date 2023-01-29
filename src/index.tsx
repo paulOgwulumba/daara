@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { loadStdlib } from '@reach-sh/stdlib';
-import { ALGO_MyAlgoConnect as MyAlgoConnect }  from '@reach-sh/stdlib';
+import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { RecoilRoot } from 'recoil';
 import { Prompt } from './components/Prompt';
 import App from './App';

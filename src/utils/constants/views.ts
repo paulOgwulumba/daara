@@ -10,4 +10,5 @@ export enum Views {
     WINNER_VIEW = 8,
     LOSER_VIEW = 9,
     REVIEW_GAME_VIEW = 10,
+    DRAW_VIEW = 11,
 };

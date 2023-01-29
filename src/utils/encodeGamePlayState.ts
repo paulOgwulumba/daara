@@ -17,6 +17,7 @@ export const encodeGamePlayState = () => {
     const isPlayerToPlayAgain = state.gamePlayState.isPlayerToPlayAgain;
     const isPlayerToAttackOpponentPieces = state.gamePlayState.isPlayerToAttackOpponentPieces;
     const numberOfAttacksLeft = state.gamePlayState.numberOfAttacksLeft;
+    const drawState = state.gamePlayState.drawState;
 
     let encodedString = '';
     encodedString += allPiecesAddedToBoard? 'T' : 'F';
@@ -30,6 +31,7 @@ export const encodeGamePlayState = () => {
     encodedString += isPlayerToPlayAgain? 'T' : 'F';
     encodedString += isPlayerToAttackOpponentPieces? 'T' : 'F';
     encodedString += numberOfAttacksLeft.toString();
+    encodedString += drawState.toString();
 
     return encodedString;
 }

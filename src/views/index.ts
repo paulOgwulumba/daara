@@ -9,3 +9,4 @@ export * from './WaitingForAttacherView';
 export * from './WinnerView';
 export * from './LoserView';
 export * from './ReviewGameView';
+export * from './DrawView';
