@@ -40,6 +40,7 @@ import {
     updatePlayerTurn,
     updatePlayerTwoPiecesInHand,
     updatePlayerTwoPiecesLeft,
+    updateDrawState,
 } from './redux/slices';
 
 export interface IAppProps {
@@ -81,7 +82,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
     const awaitPlayerMoveOrSkipIfGameHasEnded = async () => {
         const currentPlayer = Store.getState().gamePlayState.currentPlayer;      
         const piecesLeft = currentPlayer === player.FIRST_PLAYER? Store.getState().playerState.playerOnePiecesLeft : Store.getState().playerState.playerTwoPiecesLeft;
-            
+        console.log('pieces left', piecesLeft); 
         if (piecesLeft >= 3) {
             setIsGameLoading(false);
             await awaitPlayerMove();
@@ -154,6 +155,7 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updatePlayerTurn(decodedGamePlayState.playerTurn));
             dispatch(updatePlayerTwoPiecesInHand(decodedGamePlayState.playerTwoPiecesInHand));
             dispatch(updatePlayerTwoPiecesLeft(decodedGamePlayState.playerTwoPiecesLeft));
+            dispatch(updateDrawState(decodedGamePlayState.drawState));
             dispatch(updateBoardState(newBoardState));
         }, 
 
@@ -189,6 +191,12 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             else {
                 dispatch(updateCurrentView(Views.LOSER_VIEW));
             }
+        },
+
+        informDraw: () => {
+            setIsGameLoading(false);
+            setIsLoading(false);
+            dispatch(updateCurrentView(Views.DRAW_VIEW));
         }
     };
 
@@ -221,6 +229,14 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             await inform ({
                 heading: 'Error',
                 information: `Insufficient funds in wallet to set the wager of ${wager}.`
+            })
+            return;
+        }
+
+        if ((balance) < 15) {
+            await inform ({
+                heading: 'Error',
+                information: `Insufficient funds in wallet to create contract. You need at least 15 Algos but you have ${balance} Algos.`
             })
             return;
         }
@@ -258,13 +274,16 @@ const App = ({ reach, reachBackend }: IAppProps) => {
             dispatch(updateCurrentPlayer(player.SECOND_PLAYER))
         }
         catch (err) {
+            await inform ({
+                heading: 'Error',
+                information: err?.toString(),
+            })
             setIsLoading(false);
             return;
         }
     };
 
     const handleJoinGame = async (contractAddress: string) => {
-        console.log('Joining game');
         setIsLoading(true);
         
         try {
@@ -288,12 +307,19 @@ const App = ({ reach, reachBackend }: IAppProps) => {
         }
     };
 
-    const resolvePromise = (boardStateString) => {
+    const resolvePromise = (boardStateString = '') => {
         setIsGameLoading(true);
 
-        dispatch(updateBoardStateArchive(boardStateString));
+        if (boardStateString.length > 0) {
+            dispatch(updateBoardStateArchive(boardStateString));
+        }
 
-        promise.resolve();
+        setPromise((value) => {
+            if (value.resolve) {
+                value.resolve();
+            }
+            return { resolve: null }
+        })
     }
 
     const handlePlayerRoleSelect = (role: participantTitle) => {
@@ -337,9 +363,29 @@ const App = ({ reach, reachBackend }: IAppProps) => {
 
     return (
       <div className = 'App'>
-          <Loader isVisible = { isLoading }/>
+          <Loader 
+            isVisible = { 
+                isLoading && 
+                (
+                    currentView !== Views.LOSER_VIEW ||
+                    currentView !== Views.WINNER_VIEW ||
+                    currentView !== Views.REVIEW_GAME_VIEW ||
+                    currentView !== Views.DRAW_VIEW
+                ) 
+            }
+          />
 
-          <GameLoader isVisible = { isGameLoading } />
+          <GameLoader 
+            isVisible = { 
+              isGameLoading && 
+              (
+                currentView !== Views.LOSER_VIEW ||
+                currentView !== Views.WINNER_VIEW ||
+                currentView !== Views.REVIEW_GAME_VIEW ||
+                currentView !== Views.DRAW_VIEW
+              ) 
+            } 
+          />
 
           <ConditionalRender isVisible = { currentView === Views.CONNECT_ACCOUNT_VIEW }>
               <ConnectAccountView />

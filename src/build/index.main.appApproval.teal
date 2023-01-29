@@ -1,0 +1,765 @@
+#pragma version 8
+// resource: R_Txn
+txn ApplicationID
+bz alloc
+byte base64()
+app_global_get
+dup
+int 0
+extract_uint64
+store 1 // GV_currentStep :: UInt
+int 8
+extract_uint64
+store 2 // GV_currentTime :: UInt
+byte base64(AA==)
+app_global_get
+preamble:
+pushbytess base64(FEc4Dw==) base64(G275UA==) base64(dQ7kBg==) base64(pHE8lg==) base64(yn6G7A==) base64(39kjKA==) base64(4lfE+Q==) base64(/0yWvQ==)
+txna ApplicationArgs 0
+match _reachp_6 _reachp_5 _reachp_2 _reachp_0 _reachp_4 _reachp_1 _reachp_7 _reachp_8
+errl:
+err
+_reachi_0:
+txn Sender
+store 23 // Alice/285
+load 11 // v642
+int 0
+extract_uint64
+store 12 // v641
+load 11 // v642
+int 8
+extract_uint64
+store 22 // wager/286
+load 11 // v642
+int 16
+extract_uint64
+store 21 // deadline/287
+byte base64(93ETTQ==)
+load 12 // v641
+itob
+concat
+load 22 // wager/286
+itob
+concat
+load 21 // deadline/287
+itob
+concat
+log // up to 28 bytes
+// ^ log: "_reach_e0" [v641,wager/286,deadline/287] "_reach_e0(uint64,uint64,uint64)"
+load 12 // v641
+callsub l2_LF_timeCheck
+load 22 // wager/286
+callsub l3_LF_checkTxn_False
+// ^ CheckPay
+// at ./index.rsh:115:6:dot
+global Round
+load 21 // deadline/287
++
+store 13 // v298
+l4_LF_svsDump_1:
+load 23 // Alice/285
+load 22 // wager/286
+itob
+concat
+load 21 // deadline/287
+itob
+concat
+load 13 // v298
+itob
+concat
+int 48
+bzero
+concat
+int 1
+global Round
+updateStateNoOp:
+store 2 // GV_currentTime :: UInt
+store 1 // GV_currentStep :: UInt
+byte base64(AA==)
+swap
+extract 0 104
+app_global_put
+byte base64()
+load 1 // GV_currentStep :: UInt
+itob
+load 2 // GV_currentTime :: UInt
+itob
+concat
+app_global_put
+txn OnCompletion
+int NoOp
+==
+assert
+// checked on completion
+callsub l16_LF_updateMbr
+updateState:
+load 3 // GV_wasntMeth :: Bool
+bnz done
+apiReturn_noCheck:
+byte base64(FR98dQ==)
+load 4 // GV_apiRet :: Null
+concat
+log // up to 4 bytes
+done:
+int 1
+return
+_reachi_1:
+txn Sender
+store 20 // Bob/302
+int 1
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l5_LF_svsLoad_1
+load 11 // v645
+btoi
+store 12 // v644
+byte base64(1RUZFA==)
+load 12 // v644
+itob
+concat
+log // up to 12 bytes
+// ^ log: "_reach_e1" [v644] "_reach_e1(uint64)"
+load 12 // v644
+callsub l2_LF_timeCheck
+global Round
+load 13 // v298
+<
+assert
+load 22 // wager/286
+callsub l3_LF_checkTxn_False
+// ^ CheckPay
+// at ./index.rsh:123:7:dot
+int 3
+global Round
+load 22 // wager/286
+dup
++
+store 17 // netBalance/315
+store 18 // thisConsensusTime/308
+store 19 // outcome/307
+_reachl_3:
+load 19 // outcome/307
+int 3
+==
+bz l12_ifF
+load 18 // thisConsensusTime/308
+load 21 // deadline/287
++
+store 11 // v330
+l13_LF_svsDump_7:
+load 23 // Alice/285
+load 22 // wager/286
+itob
+concat
+load 21 // deadline/287
+itob
+concat
+load 20 // Bob/302
+concat
+load 17 // netBalance/315
+itob
+concat
+load 11 // v330
+itob
+concat
+int 8
+bzero
+concat
+int 7
+global Round
+b updateStateNoOp
+_reachi_2:
+int 1
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l5_LF_svsLoad_1
+load 11 // v648
+btoi
+store 12 // v647
+byte base64(l073Fw==)
+load 12 // v647
+itob
+concat
+log // up to 12 bytes
+// ^ log: "_reach_e2" [v647] "_reach_e2(uint64)"
+load 12 // v647
+callsub l2_LF_timeCheck
+global Round
+load 13 // v298
+>=
+assert
+load 22 // wager/286
+// resource: R_Account
+load 23 // Alice/285
+callsub l6_LF_makeTxn_False_False_False_True
+updateStateHalt:
+txn OnCompletion
+int DeleteApplication
+==
+assert
+// checked on completion
+callsub l16_LF_updateMbr
+// resource: R_Account
+int 0
+global CurrentApplicationAddress
+global CreatorAddress
+callsub l17_LF_makeTxn_False_True_False_True
+b updateState
+_reachi_4:
+int 7
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l7_LF_svsLoad_7
+load 12 // v651
+int 0
+extract_uint64
+store 13 // v650
+byte base64(BM+NIg==)
+load 13 // v650
+itob
+concat
+load 12 // v651
+extract 8 29
+concat
+load 12 // v651
+extract 37 12
+concat
+log // up to 53 bytes
+// ^ log: "_reach_e4" [v650,handBob/340,gameStateBob/341] "_reach_e4(uint64,byte[29],byte[12])"
+load 13 // v650
+callsub l2_LF_timeCheck
+global Round
+load 11 // v330
+<
+assert
+load 20 // Bob/302
+txn Sender
+==
+assert
+// ^ Claim: sender correct
+// at ./index.rsh:137:9:dot
+global Round
+load 21 // deadline/287
++
+store 13 // v351
+l8_LF_svsDump_9:
+load 23 // Alice/285
+load 22 // wager/286
+itob
+concat
+load 21 // deadline/287
+itob
+concat
+load 20 // Bob/302
+concat
+load 17 // netBalance/315
+itob
+concat
+load 13 // v351
+itob
+concat
+int 8
+bzero
+concat
+int 9
+global Round
+b updateStateNoOp
+_reachi_5:
+int 7
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l7_LF_svsLoad_7
+load 12 // v654
+btoi
+store 13 // v653
+byte base64(gaqazw==)
+load 13 // v653
+itob
+concat
+log // up to 12 bytes
+// ^ log: "_reach_e5" [v653] "_reach_e5(uint64)"
+load 13 // v653
+callsub l2_LF_timeCheck
+global Round
+load 11 // v330
+>=
+assert
+load 23 // Alice/285
+txn Sender
+==
+load 20 // Bob/302
+txn Sender
+==
+||
+assert
+// ^ Claim: sender correct
+// at reach standard library:197:11:dot
+// at ./index.rsh:138:53:application call to "closeTo" (defined at: reach standard library:195:8:function exp)
+load 17 // netBalance/315
+// resource: R_Account
+load 23 // Alice/285
+callsub l6_LF_makeTxn_False_False_False_True
+b updateStateHalt
+_reachi_6:
+int 9
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l9_LF_svsLoad_9
+load 11 // v657
+int 0
+extract_uint64
+store 12 // v656
+load 11 // v657
+int 49
+extract_uint64
+store 16 // piecesAlice/368
+load 11 // v657
+int 57
+extract_uint64
+store 15 // computedPiecesBob/369
+byte base64(mC3v4g==)
+load 12 // v656
+itob
+concat
+load 11 // v657
+extract 8 29
+concat
+load 11 // v657
+extract 37 12
+concat
+load 16 // piecesAlice/368
+itob
+concat
+load 15 // computedPiecesBob/369
+itob
+concat
+log // up to 69 bytes
+// ^ log: "_reach_e6" [v656,handAlice/366,gameStateAlice/367,piecesAlice/368,computedPiecesBob/369] "_reach_e6(uint64,byte[29],byte[12],uint64,uint64)"
+load 12 // v656
+callsub l2_LF_timeCheck
+global Round
+load 13 // v351
+<
+assert
+load 23 // Alice/285
+txn Sender
+==
+assert
+// ^ Claim: sender correct
+// at ./index.rsh:148:11:dot
+l10_LF_svsDump_11:
+load 23 // Alice/285
+load 22 // wager/286
+itob
+concat
+load 21 // deadline/287
+itob
+concat
+load 20 // Bob/302
+concat
+load 17 // netBalance/315
+itob
+concat
+load 16 // piecesAlice/368
+itob
+concat
+load 15 // computedPiecesBob/369
+itob
+concat
+int 11
+global Round
+b updateStateNoOp
+_reachi_7:
+int 9
+load 1 // GV_currentStep :: UInt
+==
+assert
+callsub l9_LF_svsLoad_9
+load 11 // v660
+btoi
+store 12 // v659
+byte base64(caixow==)
+load 12 // v659
+itob
+concat
+log // up to 12 bytes
+// ^ log: "_reach_e7" [v659] "_reach_e7(uint64)"
+load 12 // v659
+callsub l2_LF_timeCheck
+global Round
+load 13 // v351
+>=
+assert
+load 23 // Alice/285
+txn Sender
+==
+load 20 // Bob/302
+txn Sender
+==
+||
+assert
+// ^ Claim: sender correct
+// at reach standard library:197:11:dot
+// at ./index.rsh:149:53:application call to "closeTo" (defined at: reach standard library:195:8:function exp)
+load 17 // netBalance/315
+// resource: R_Account
+load 20 // Bob/302
+callsub l6_LF_makeTxn_False_False_False_True
+b updateStateHalt
+_reachi_8:
+int 11
+load 1 // GV_currentStep :: UInt
+==
+assert
+l11_LF_svsLoad_11:
+dup
+extract 0 32
+store 23 // Alice/285
+dup
+int 32
+extract_uint64
+store 22 // wager/286
+dup
+int 40
+extract_uint64
+store 21 // deadline/287
+dup
+extract 48 32
+store 20 // Bob/302
+dup
+int 80
+extract_uint64
+store 17 // netBalance/315
+dup
+int 88
+extract_uint64
+store 16 // piecesAlice/368
+int 96
+extract_uint64
+store 15 // computedPiecesBob/369
+load 11 // v663
+int 0
+extract_uint64
+store 12 // v662
+load 11 // v663
+int 8
+extract_uint64
+store 14 // piecesBob/381
+load 11 // v663
+int 16
+extract_uint64
+store 13 // computedPiecesAlice/382
+byte base64(EoZbwA==)
+load 12 // v662
+itob
+concat
+load 14 // piecesBob/381
+itob
+concat
+load 13 // computedPiecesAlice/382
+itob
+concat
+log // up to 28 bytes
+// ^ log: "_reach_e8" [v662,piecesBob/381,computedPiecesAlice/382] "_reach_e8(uint64,uint64,uint64)"
+load 12 // v662
+callsub l2_LF_timeCheck
+load 20 // Bob/302
+txn Sender
+==
+assert
+// ^ Claim: sender correct
+// at ./index.rsh:157:9:dot
+load 14 // piecesBob/381
+int 3
+<
+store 12 // v392
+load 16 // piecesAlice/368
+int 3
+<
+store 11 // v393
+int 4
+int 3
+int 2
+load 12 // v392
+select
+int 0
+load 11 // v393
+select
+int 1
+load 12 // v392
+load 11 // v393
+&&
+select
+load 13 // computedPiecesAlice/382
+load 16 // piecesAlice/368
+==
+load 15 // computedPiecesBob/369
+load 14 // piecesBob/381
+==
+&&
+select
+global Round
+store 18 // thisConsensusTime/308
+store 19 // outcome/307
+b _reachl_3
+_reachp_0:
+callsub l0_LF_wasntMeth
+int 100000
+l1_LF_mbrAdd:
+load 6 // GV_mbrAdd :: UInt
++
+store 6 // GV_mbrAdd :: UInt
+txna ApplicationArgs 1
+store 11 // v642
+b _reachi_0
+_reachp_1:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 11 // v645
+b _reachi_1
+_reachp_2:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 11 // v648
+b _reachi_2
+_reachp_4:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 12 // v651
+b _reachi_4
+_reachp_5:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 12 // v654
+b _reachi_5
+_reachp_6:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 11 // v657
+b _reachi_6
+_reachp_7:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 11 // v660
+b _reachi_7
+_reachp_8:
+callsub l0_LF_wasntMeth
+txna ApplicationArgs 1
+store 11 // v663
+b _reachi_8
+alloc:
+int 0
+txn GlobalNumUint
+==
+assert
+int 2
+txn GlobalNumByteSlice
+==
+assert
+int 0
+txn LocalNumUint
+==
+assert
+int 0
+txn LocalNumByteSlice
+==
+assert
+callsub l0_LF_wasntMeth
+int 104
+bzero
+int 0
+int 0
+b updateStateNoOp
+apiReturn_check:
+txn OnCompletion
+int NoOp
+==
+assert
+// checked on completion
+b apiReturn_noCheck
+l12_ifF:
+load 19 // outcome/307
+int 4
+==
+bz l14_ifF
+load 22 // wager/286
+// resource: R_Account
+load 23 // Alice/285
+callsub l6_LF_makeTxn_False_False_False_True
+load 22 // wager/286
+// resource: R_Account
+load 20 // Bob/302
+callsub l6_LF_makeTxn_False_False_False_True
+b updateStateHalt
+l14_ifF:
+load 19 // outcome/307
+int 1
+==
+bz l15_ifF
+load 22 // wager/286
+// resource: R_Account
+load 23 // Alice/285
+callsub l6_LF_makeTxn_False_False_False_True
+load 22 // wager/286
+// resource: R_Account
+load 20 // Bob/302
+callsub l6_LF_makeTxn_False_False_False_True
+b updateStateHalt
+l15_ifF:
+int 2
+load 22 // wager/286
+*
+// resource: R_Account
+load 20 // Bob/302
+load 23 // Alice/285
+load 19 // outcome/307
+int 2
+==
+select
+callsub l6_LF_makeTxn_False_False_False_True
+b updateStateHalt
+l18_LF_makeTxnK_False_True:
+int 0
+itxn_field Fee
+int pay
+itxn_field TypeEnum
+itxn_field Receiver
+itxn_field Amount
+itxn_submit
+retsub
+updateMbr_eq:
+pop
+retsub
+updateMbr_neg:
+swap
+-
+dup
+store 6 // GV_mbrAdd :: UInt
+global CreatorAddress
+callsub l6_LF_makeTxn_False_False_False_True
+retsub
+updateMbr_pos_eq:
+-
+dup
+bz updateMbr_eq
+dup
+store 6 // GV_mbrAdd :: UInt
+callsub l3_LF_checkTxn_False
+retsub
+l6_LF_makeTxn_False_False_False_True:
+itxn_begin
+b l18_LF_makeTxnK_False_True
+l0_LF_wasntMeth:
+int 1
+store 3 // GV_wasntMeth :: Bool
+retsub
+l2_LF_timeCheck:
+dup
+int 0
+==
+swap
+load 2 // GV_currentTime :: UInt
+==
+||
+assert
+retsub
+l3_LF_checkTxn_False:
+// resource: R_Txn
+txn GroupIndex
+load 0 // GV_txnCounter :: UInt
+int 1
++
+dup
+store 0 // GV_txnCounter :: UInt
+-
+dupn 2
+gtxns Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxns TypeEnum
+int pay
+==
+assert
+gtxns Amount
+==
+assert
+retsub
+l9_LF_svsLoad_9:
+dup
+extract 0 32
+store 23 // Alice/285
+dup
+int 32
+extract_uint64
+store 22 // wager/286
+dup
+int 40
+extract_uint64
+store 21 // deadline/287
+dup
+extract 48 32
+store 20 // Bob/302
+dup
+int 80
+extract_uint64
+store 17 // netBalance/315
+int 88
+extract_uint64
+store 13 // v351
+retsub
+l7_LF_svsLoad_7:
+dup
+extract 0 32
+store 23 // Alice/285
+dup
+int 32
+extract_uint64
+store 22 // wager/286
+dup
+int 40
+extract_uint64
+store 21 // deadline/287
+dup
+extract 48 32
+store 20 // Bob/302
+dup
+int 80
+extract_uint64
+store 17 // netBalance/315
+int 88
+extract_uint64
+store 11 // v330
+retsub
+l5_LF_svsLoad_1:
+dup
+extract 0 32
+store 23 // Alice/285
+dup
+int 32
+extract_uint64
+store 22 // wager/286
+dup
+int 40
+extract_uint64
+store 21 // deadline/287
+int 48
+extract_uint64
+store 13 // v298
+retsub
+l16_LF_updateMbr:
+load 6 // GV_mbrAdd :: UInt
+load 7 // GV_mbrSub :: UInt
+dup2
+>=
+bz updateMbr_neg
+b updateMbr_pos_eq
+l17_LF_makeTxn_False_True_False_True:
+itxn_begin
+itxn_field CloseRemainderTo
+b l18_LF_makeTxnK_False_True

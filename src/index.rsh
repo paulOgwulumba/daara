@@ -54,6 +54,7 @@ const Player = {
   updateOpponentMove: Fun([Bytes(29), Bytes(12)], Null),
   informTimeout: Fun([], Null),
   informDisagreement: Fun([], Null),
+  informDraw: Fun([], Null),
   announceWinner: Fun([], Null)
 };
 
@@ -85,6 +86,12 @@ export const main = Reach.App(() => {
   const informDisagreement = () => {
     each([Alice, Bob], () => {
       interact.informDisagreement();
+    });
+  };
+
+  const informDraw = () => {
+    each([Alice, Bob], () => {
+      interact.informDraw();
     });
   };
 
@@ -158,6 +165,11 @@ export const main = Reach.App(() => {
     transfer(wager).to(Alice);
     transfer(wager).to(Bob);
     informDisagreement();
+  }
+  else if (outcome == DRAW) {
+    transfer(wager).to(Alice);
+    transfer(wager).to(Bob);
+    informDraw();
   }
   else {
     transfer(2 * wager).to(outcome == A_WINS ? Alice : Bob);

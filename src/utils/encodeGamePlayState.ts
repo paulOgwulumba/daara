@@ -18,6 +18,7 @@ export const encodeGamePlayState = () => {
     const isPlayerToAttackOpponentPieces = state.gamePlayState.isPlayerToAttackOpponentPieces;
     const numberOfAttacksLeft = state.gamePlayState.numberOfAttacksLeft;
     const drawState = state.gamePlayState.drawState;
+    console.log('drawState', drawState);
 
     let encodedString = '';
     encodedString += allPiecesAddedToBoard? 'T' : 'F';

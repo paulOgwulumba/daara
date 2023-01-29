@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { updateCurrentView, refreshBoardState, refreshGamePlayState, refreshPlayerState } from '../redux/slices';
 import { Views } from '../utils/constants';

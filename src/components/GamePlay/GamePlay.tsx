@@ -214,7 +214,8 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
 
         if (!response) return;
 
-        dispatch(updateDrawState(DRAW_STATE.REJECTED_DRAW));
+        dispatch(updateDrawState(DRAW_STATE.ASK_FOR_DRAW));
+        togglePlayerTurn(playerTurn, dispatch);
         resolvePromise();
     };
 
@@ -233,10 +234,12 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
             dispatch(updatePlayerTwoPiecesLeft(2));
         }
 
+        togglePlayerTurn(playerTurn, dispatch);
         resolvePromise();
     };
 
     const analyzeDrawState = async () => {
+        console.log(drawState)
         if (drawState === DRAW_STATE.ASK_FOR_DRAW) {
             acceptOrRejectDraw();
         }
@@ -253,6 +256,7 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
         if (drawState === DRAW_STATE.ACCEPTED_DRAW) {
             dispatch(updatePlayerOnePiecesLeft(2));
             dispatch(updatePlayerTwoPiecesLeft(2));
+            togglePlayerTurn(playerTurn, dispatch);
             resolvePromise();
         }
     };
@@ -267,10 +271,12 @@ function GamePlay({ resolvePromise, isGameLoading }: IGamePlayProps) {
             dispatch(updateDrawState(DRAW_STATE.ACCEPTED_DRAW));
             dispatch(updatePlayerOnePiecesLeft(2));
             dispatch(updatePlayerTwoPiecesLeft(2));
+            togglePlayerTurn(playerTurn, dispatch);
             resolvePromise();
         }
         else {
             dispatch(updateDrawState(DRAW_STATE.REJECTED_DRAW));
+            togglePlayerTurn(playerTurn, dispatch);
             resolvePromise();
         }
     };
