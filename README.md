@@ -1,5 +1,4 @@
 # daara
-Dapp entry for decentralized-umoja-2 bounty hack. 
 
 ### Description
 This is a board game very similar to the popular Tic-Tac-Toe. Two players set a wager in ALG and compete with each other for it.
