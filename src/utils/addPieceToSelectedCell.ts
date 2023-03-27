@@ -24,7 +24,6 @@ import { updateBoardState } from '../redux/slices';
         cellState.CELL_CONTAINING_PIECE_PLAYER_2;
 
     if (dispatch) {
-        // setState(stringifyBoardState(unpackedBoardState));
         dispatch(updateBoardState(stringifyBoardState(unpackedBoardState)));
     }
 
